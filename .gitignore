@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# next.js build output
+.next/
+out/
+
+# misc
+.DS_Store
+*.pem
+.env*
+!.env.example
+
+# package-lock (optional — remove this line if you want to commit it)
+# package-lock.json
