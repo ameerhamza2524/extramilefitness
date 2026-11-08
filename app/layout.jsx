@@ -5,8 +5,8 @@ const sans = Outfit({ subsets: ["latin"], variable: "--sans", weight: ["300", "4
 const script = Mrs_Saint_Delafield({ subsets: ["latin"], variable: "--script", weight: "400" });
 
 export const metadata = {
-  title: "Extra Mile Fitness | Your best wasn't back then. It's ahead of you",
-  description: "1:1 online coaching for capable men and women who've been in shape before and are ready to go past it.",
+  title: "Extra Mile Fitness | Get in the best shape of your life, without it taking over your life",
+  description: "1:1 concierge coaching for busy professionals who run teams, travel and don't have time to figure it out.",
   icons: {
     icon: [
       { url: "/icon.png", type: "image/png" },
@@ -21,7 +21,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${sans.variable} ${script.variable}`}>
-      <body>{children}</body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

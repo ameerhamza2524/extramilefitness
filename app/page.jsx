@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-const APPLY = "https://www.ptextramilefitness.com/widget/survey/Nz8kmtE6GWsivAq5sOCV";
+const APPLY = "#apply";
+const APPLY_FORM = "https://ww.ptextramilefitness.com/widget/survey/Nz8kmtE6GWsivAq5sOCV";
 const CDN = "https://images.squarespace-cdn.com/content/v1/669cd7e93e05045d9aff6341/";
 const img = (path, w = 900) => `${CDN}${path}?format=${w}w`;
 
@@ -60,7 +61,7 @@ const transforms = [
   "8e1a09d3-0eba-47fd-aa70-a6ab5bba4979/Amy.png",
 ];
 
-const videoTestimonials = ["Hazel", "Sophia", "Reiss", "Ariel", "Maggie", "Alice", "Monica", "Mide", "Lydia", "Melina", "Louis"];
+const videoTestimonials = ["Reiss", "Louis", "Hazel", "Ariel", "Maggie", "Alice"];
 
 const faqs = [
   ["How long is the programme?", "Our signature programme has a minimum commitment of 6 months for two main reasons: We hold ourselves to getting a world-class result, and this simply isn't possible in less time. It also allows you to fully develop within the programme without feeling rushed through the process."],
@@ -72,7 +73,7 @@ const faqs = [
   ["Will I have to eat boring meals?", "No. We keep meals simple at first while we learn how your body responds to food, then you explore more as we move through the phases."],
 ];
 
-const HERO_VIDEO = "";
+const HERO_VIDEO = "/video/hero.mp4";
 const STORY_VIDEO = "";
 
 /* ── Animated word reveal ── */
@@ -110,7 +111,7 @@ function UrgencyBanner() {
   return (
     <div className="urgency-bar" aria-live="polite">
       <span className="urgency-dot" aria-hidden="true" />
-      Limited spots available — New members start <strong>1st Monday of the month</strong>
+      <span>Limited spots available<span className="urgency-mid"> — New members start <strong>1st Monday of the month</strong></span></span>
       <a href={APPLY} className="urgency-link">Secure yours →</a>
     </div>
   );
@@ -123,7 +124,7 @@ const tickers = [
   "Reiss — revenge body built in 20 weeks",
   "Ryan — best shape of his life for his 30th",
   "Veronique — transformed her mirror reflection",
-  "650+ success stories across 7 countries",
+  "671 success stories across 7 countries",
 ];
 function Ticker() {
   return (
@@ -150,12 +151,205 @@ function TestimonialCard({ name }) {
   );
 }
 
+/* ── Transformation strip (auto-scroll + arrows) ── */
+function TransformRow({ items, reverse = false }) {
+  const trackRef = useRef(null);
+  const offset = useRef(0);
+  const paused = useRef(false);
+  const hover = useRef(false);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const dir = reverse ? 1 : -1;
+    let raf;
+    let last = performance.now();
+
+    const frame = (now) => {
+      const dt = Math.min(now - last, 48);
+      last = now;
+      const half = track.scrollWidth / 2;
+
+      if (half > 0) {
+        if (!paused.current && !hover.current) {
+          offset.current += dir * 0.45 * (dt / 16.67);
+        }
+        if (dir < 0) {
+          if (offset.current <= -half) offset.current += half;
+        } else if (offset.current >= 0) {
+          offset.current -= half;
+        }
+        offset.current = Math.max(-half, Math.min(0, offset.current));
+        track.style.transform = `translate3d(${offset.current}px,0,0)`;
+      }
+
+      raf = requestAnimationFrame(frame);
+    };
+
+    raf = requestAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer.current);
+    };
+  }, [reverse]);
+
+  const step = (sign) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const half = track.scrollWidth / 2;
+    const first = track.firstElementChild;
+    if (!half || !first) return;
+
+    const card = first.getBoundingClientRect().width + 16;
+    paused.current = true;
+    track.classList.add("nudging");
+    offset.current = Math.max(-half, Math.min(0, offset.current + sign * card));
+    track.style.transform = `translate3d(${offset.current}px,0,0)`;
+
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      track.classList.remove("nudging");
+      paused.current = false;
+    }, 900);
+  };
+
+  return (
+    <div
+      className="tg-row"
+      onMouseEnter={() => { hover.current = true; }}
+      onMouseLeave={() => { hover.current = false; }}
+    >
+      <button className="tg-btn prev" onClick={() => step(1)} aria-label="Previous transformations">‹</button>
+      <div className="tg">
+        <div ref={trackRef} className="tg-track">
+          {[...items, ...items].map((s, i) => (
+            <img key={i} loading="lazy" src={img(s, 750)} alt="Transformation" />
+          ))}
+        </div>
+      </div>
+      <button className="tg-btn next" onClick={() => step(-1)} aria-label="Next transformations">›</button>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   APPLY FORM EMBED (HIGHLEVEL SURVEY)
+══════════════════════════════════════ */
+function ApplyFormEmbed() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Inject the HighLevel form_embed.js script
+    const scriptSrc = "https://ww.ptextramilefitness.com/js/form_embed.js";
+    let script = document.querySelector(`script[src="${scriptSrc}"]`);
+    if (!script) {
+      script = document.createElement("script");
+      script.src = scriptSrc;
+      script.type = "text/javascript";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    // Safety fallback: ensure skeleton transitions away after 3s if iframe finishes silently
+    const timer = setTimeout(() => setLoaded(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="apply-card" data-r>
+      <div className="apply-card-topbar">
+        <span className="apply-status-pill">
+          <span className="apply-dot" aria-hidden="true" />
+          Application Window Open
+        </span>
+        <span className="apply-card-tag">1:1 Concierge Coaching</span>
+      </div>
+
+      <div className="apply-embed">
+        {!loaded && (
+          <div className="apply-skeleton">
+            <div className="apply-spinner" aria-hidden="true" />
+            <span className="apply-skeleton-text">Loading application...</span>
+          </div>
+        )}
+        <iframe
+          src={APPLY_FORM}
+          id="Nz8kmtE6GWsivAq5sOCV"
+          title="Extra Mile Fitness Application Form"
+          scrolling="no"
+          onLoad={() => setLoaded(true)}
+          style={{ border: "none", width: "100%" }}
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════
    PAGE
 ══════════════════════════════════════ */
 export default function Page() {
   const vref = useRef(null);
+  const userSet = useRef(false);
   const [muted, setMuted] = useState(true);
+  const [soundBlocked, setSoundBlocked] = useState(false);
+
+  /* Sound is ON by default. Browsers can block un-muted autoplay until the
+     visitor interacts, so we keep retrying (on load + first click/keypress)
+     and fall back to muted only while waiting. The button stays a plain
+     toggle: "Sound on" / "Sound off". */
+  useEffect(() => {
+    const v = vref.current;
+    if (!v) return;
+
+    const gestures = ["pointerdown", "keydown", "touchstart"];
+    let attached = false;
+
+    const detach = () => {
+      gestures.forEach((ev) => removeEventListener(ev, onGesture));
+      attached = false;
+    };
+    const onGesture = (e) => {
+      /* Ignore the sound button — it has its own toggle handler. */
+      if (e.target?.closest?.(".snd")) { detach(); return; }
+      if (userSet.current) { detach(); return; }
+      v.muted = false;
+      v.play().catch(() => {});
+      setMuted(false);
+      setSoundBlocked(false);
+      detach();
+    };
+    const attach = () => {
+      if (attached) return;
+      attached = true;
+      gestures.forEach((ev) => addEventListener(ev, onGesture, { once: true }));
+    };
+
+    const trySoundOn = () => {
+      if (userSet.current) return;
+      v.muted = false;
+      const p = v.play();
+      if (p && p.then) {
+        p.then(() => { if (!userSet.current) setMuted(false); }).catch(() => {
+          if (userSet.current) return;
+          v.muted = true;
+          setMuted(true);
+          setSoundBlocked(true);
+          v.play().catch(() => {});
+          attach();
+        });
+      }
+    };
+
+    trySoundOn();
+    v.addEventListener("canplay", trySoundOn);
+
+    return () => {
+      v.removeEventListener("canplay", trySoundOn);
+      detach();
+    };
+  }, []);
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -178,6 +372,15 @@ export default function Page() {
     const cur = document.querySelector(".cur");
     const root = document.documentElement;
     let raf;
+
+    /* Keep the fixed nav/hero clear of the urgency banner, whose height
+       changes when its text wraps (mostly on mobile). */
+    const ub = document.querySelector(".urgency-bar");
+    const setTopbar = () => root.style.setProperty("--topbar-h", `${ub ? ub.offsetHeight : 38}px`);
+    setTopbar();
+    addEventListener("resize", setTopbar);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(setTopbar) : null;
+    if (ro && ub) ro.observe(ub);
 
     const onScroll = () => {
       cancelAnimationFrame(raf);
@@ -205,6 +408,8 @@ export default function Page() {
       removeEventListener("scroll", onScroll);
       removeEventListener("mousemove", onMove);
       removeEventListener("mouseout", onOut);
+      removeEventListener("resize", setTopbar);
+      if (ro) ro.disconnect();
     };
   }, []);
 
@@ -235,13 +440,13 @@ export default function Page() {
         <div className="ghost" data-p="-0.12" aria-hidden>EXTRA MILE</div>
         <div className="wrap">
           <div>
-            <div className="eyebrow" data-r>1:1 Online Coaching</div>
+            <div className="eyebrow" data-r>1:1 Concierge Coaching</div>
             <h1>
-              <Words t="Your best wasn't back then." />
-              <em><Words t="It's ahead of you." /></em>
+              <Words t="Get in the best shape of your life," />
+              <em><Words t="without it taking over your life." /></em>
             </h1>
             <p className="sub" data-r style={{ "--d": "1.9s" }}>
-              For capable men and women who've been in shape before and are ready to go past it — with a coach holding you to a higher standard.
+              1:1 concierge coaching for busy professionals who run teams, travel and don't have time to figure it out.
             </p>
             <div data-r style={{ "--d": "2.1s" }}>
               <a className="btn solid hero-cta" href={APPLY}>Apply for coaching →</a>
@@ -255,14 +460,32 @@ export default function Page() {
             </div>
           </div>
           <div className="phw" data-r style={{ "--d": "1.6s" }}>
-            <div className="ph">
+            <div className={`ph${HERO_VIDEO ? " has-video" : ""}`}>
               {HERO_VIDEO
-                ? <video ref={vref} src={HERO_VIDEO} autoPlay muted loop playsInline />
+                ? <video ref={vref} src={HERO_VIDEO} poster="/img/hero.webp" autoPlay muted={muted} loop playsInline preload="metadata" />
                 : <img src="/img/hero.webp" alt="Miles, founder of Extra Mile Fitness" />}
             </div>
             {HERO_VIDEO && (
-              <button className="snd" onClick={() => { vref.current.muted = !muted; setMuted(!muted); }}>
-                {muted ? "Turn sound on" : "Sound off"}
+              <button
+                className="snd"
+                aria-pressed={!muted}
+                aria-label={muted ? "Turn sound on" : "Turn sound off"}
+                onClick={() => {
+                  const v = vref.current;
+                  if (!v) return;
+                  userSet.current = true;
+                  if (muted) {
+                    v.muted = false;
+                    setMuted(false);
+                    setSoundBlocked(false);
+                    v.play().catch(() => {});
+                  } else {
+                    v.muted = true;
+                    setMuted(true);
+                  }
+                }}
+              >
+                {muted ? (soundBlocked ? "Turn sound on" : "Sound on") : "Sound off"}
               </button>
             )}
           </div>
@@ -283,7 +506,7 @@ export default function Page() {
           2. STATS
       ════════════════════════════════ */}
       <div className="stats">
-        {[[650, "+", "Success stories"], [7, "", "Countries"], [14, "kg", "Lost in 6 months"], [24, "hrs", "Video reply time"]].map(([n, s, l]) => (
+        {[[10, "+", "Years coaching"], [671, "", "Success stories"], [83, "%", "Members stay 12+ months"]].map(([n, s, l]) => (
           <div key={l} data-r><b data-count={n} data-suf={s}>0</b><span>{l}</span></div>
         ))}
       </div>
@@ -296,20 +519,14 @@ export default function Page() {
           <div className="eyebrow" data-r>Results</div>
           <h2 data-r>Join the team. <em>Level up your life.</em></h2>
           <p className="results-sub" data-r>
-            With 650+ success stories across 7 different countries — real people, real challenges, real results.
+            With 671 success stories across 7 different countries — real people, real challenges, real results.
           </p>
         </div>
 
         {/* Scrolling transformation strip */}
         <div className="tg-wrap">
-          {[0, 1].map((r) => {
-            const a = r ? [...transforms].reverse() : transforms;
-            return (
-              <div className={`tg ${r ? "rev" : ""}`} key={r}>
-                <div>{[...a, ...a].map((s, i) => <img key={i} loading="lazy" src={img(s, 750)} alt="Transformation" />)}</div>
-              </div>
-            );
-          })}
+          <TransformRow items={transforms} />
+          <TransformRow items={transforms} reverse />
         </div>
 
         {/* Client story cards */}
@@ -328,6 +545,20 @@ export default function Page() {
                 </div>
               </div>
             ))}
+            <a className="rc rc-apply" href={APPLY} data-r style={{ "--d": "0.2s" }}>
+              <div className="rimg">
+                <span className="rc-apply-inner">
+                  <b>Your story next</b>
+                  <span>Apply for coaching →</span>
+                </span>
+              </div>
+              <div className="rb">
+                <span>6 months+</span>
+                <h3>You?</h3>
+                <b>Your transformation could be here</b>
+                <p>If you're ready to be held to a higher standard, apply and let's build your next chapter.</p>
+              </div>
+            </a>
           </div>
         </div>
 
@@ -337,26 +568,19 @@ export default function Page() {
           <h2 data-r>Hear it <em>from them.</em></h2>
           <div className="testimonials-grid" data-r>
             {videoTestimonials.map((name) => <TestimonialCard key={name} name={name} />)}
-          </div>
-        </div>
-
-        {/* Community photos */}
-        <div className="wrap" style={{ marginTop: 80 }}>
-          <div className="mos">
-            {["group", "crowd", "dine"].map((k, i) => (
-              <div key={k} data-r style={{ "--d": `${i * 0.12}s` }}>
-                <img loading="lazy" src={`/img/${k}.webp`} alt="Extra Mile Fitness community" />
+            <a className="tc tc-apply" href={APPLY}>
+              <div className="tc-thumb">
+                <span className="tc-apply-inner">
+                  <b>Your story next</b>
+                  <span>Apply for coaching →</span>
+                </span>
               </div>
-            ))}
+              <p className="tc-name">Apply now</p>
+            </a>
           </div>
         </div>
-
-        {/* Results CTA */}
-        <div className="wrap mid-cta" data-r>
-          <div className="mid-cta-inner">
-            <p>Ready to be the next story on this page?</p>
-            <a className="btn solid" href={APPLY}>Start your transformation →</a>
-          </div>
+        <div className="wrap" style={{ marginTop: 70, textAlign: "center" }} data-r>
+          <a className="btn solid" href={APPLY}>Apply for coaching →</a>
         </div>
       </section>
 
@@ -530,7 +754,64 @@ export default function Page() {
       </section>
 
       {/* ════════════════════════════════
-          12. FINAL CTA
+          12. APPLY (EMBEDDED)
+      ════════════════════════════════ */}
+      <section id="apply" style={{ background: "var(--bg2)" }}>
+        <div className="wrap" style={{ maxWidth: 960 }}>
+          <div className="eyebrow" data-r>Step 01 · Initial Intake</div>
+          <h2 data-r>Apply for <em>1-on-1 Coaching.</em></h2>
+          <p className="results-sub" data-r>
+            Complete the short assessment below to see if you're a good fit for the programme. All applications are reviewed personally within 24 hours.
+          </p>
+
+          <div className="apply-badges" data-r>
+            <div className="apply-badge">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Takes ~2–3 minutes</span>
+            </div>
+            <div className="apply-badge">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>100% Confidential</span>
+            </div>
+            <div className="apply-badge">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span>Direct Coach Review</span>
+            </div>
+            <div className="apply-badge">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Cohorts Start 1st Monday</span>
+            </div>
+          </div>
+
+          <ApplyFormEmbed />
+
+          <div className="apply-footer-info" data-r>
+            <span className="apply-secure">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Your data is encrypted and strictly confidential.
+            </span>
+            <p className="apply-fallback">
+              Form not loading?{" "}
+              <a href={APPLY_FORM} target="_blank" rel="noopener noreferrer">
+                Open application directly ↗
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════
+          13. FINAL CTA
       ════════════════════════════════ */}
       <section className="final">
         <img className="cut" data-p="0.04" src="/img/cut2.webp" alt="" />
