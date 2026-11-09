@@ -23,13 +23,34 @@ export default function ThankYouPage() {
           <a className="btn" href="/">Back to home</a>
         </div>
 
-        <div className="wrap" style={{ maxWidth: 960 }}>
-          <div className="eyebrow" data-r>Application received</div>
-          <h1 data-r>Thank <em>you.</em></h1>
-          <p className="ty-sub" data-r>
-            Your application is in. I personally review every application within 24 hours — if it's a fit, you'll hear from me directly.
-          </p>
+        <div className="wrap ty-grid">
+          <div className="ty-copy">
+            <div className="eyebrow" data-r>
+              <span className="ty-dot" aria-hidden="true" /> Application received
+            </div>
+            <h1 data-r>Thank <em>you.</em></h1>
+            <p className="ty-sub" data-r>
+              Your application is in. I personally review every application within 24 hours — if it's a fit, you'll hear from me directly.
+            </p>
+            <div className="ty-sign" data-r>
+              <span className="ty-sig">Miles</span>
+              <span className="ty-sign-role">Founder · Extra Mile Fitness</span>
+            </div>
+          </div>
 
+          <div className="ty-media" data-r>
+            <span className="ty-frame" aria-hidden="true" />
+            <div className="ty-photo">
+              <img src="/img/coach.webp" alt="Coaching session at Extra Mile Fitness" width="720" height="900" fetchPriority="high" decoding="async" />
+            </div>
+            <div className="ty-badge">
+              <b>Under review</b>
+              <span>Replies within 24 hrs</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="wrap" style={{ maxWidth: 1180 }}>
           <div className="ty-next" data-r>
             <div>
               <span>01</span>

@@ -112,6 +112,7 @@ function TestimonialCard({ name }) {
 /* ── Transformation strip (auto-scroll + arrows) ── */
 function TransformRow({ items, reverse = false }) {
   const trackRef = useRef(null);
+  const rowRef = useRef(null);
   const offset = useRef(0);
   const paused = useRef(false);
   const hover = useRef(false);
@@ -121,10 +122,14 @@ function TransformRow({ items, reverse = false }) {
     const track = trackRef.current;
     if (!track) return;
     const dir = reverse ? 1 : -1;
-    let raf;
-    let last = performance.now();
+    let raf = 0;
+    let last = 0;
+    let visible = true;
+    let running = false;
 
     const frame = (now) => {
+      if (!visible || document.hidden) { running = false; return; }
+      if (!last) last = now;
       const dt = Math.min(now - last, 48);
       last = now;
       const half = track.scrollWidth / 2;
@@ -145,9 +150,34 @@ function TransformRow({ items, reverse = false }) {
       raf = requestAnimationFrame(frame);
     };
 
-    raf = requestAnimationFrame(frame);
-    return () => {
+    const start = () => {
+      if (running || !visible || document.hidden) return;
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(frame);
+    };
+    const stop = () => {
       cancelAnimationFrame(raf);
+      running = false;
+    };
+
+    /* Only animate while the strip is on screen. */
+    const io = typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver(([e]) => {
+          visible = e.isIntersecting;
+          if (visible) start(); else stop();
+        }, { rootMargin: "200px" })
+      : null;
+    if (io && rowRef.current) io.observe(rowRef.current);
+
+    const onVisibility = () => { if (document.hidden) stop(); else start(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    start();
+
+    return () => {
+      stop();
+      if (io) io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       clearTimeout(timer.current);
     };
   }, [reverse]);
@@ -174,6 +204,7 @@ function TransformRow({ items, reverse = false }) {
 
   return (
     <div
+      ref={rowRef}
       className="tg-row"
       onMouseEnter={() => { hover.current = true; }}
       onMouseLeave={() => { hover.current = false; }}
@@ -182,7 +213,17 @@ function TransformRow({ items, reverse = false }) {
       <div className="tg">
         <div ref={trackRef} className="tg-track">
           {[...items, ...items].map((s, i) => (
-            <img key={i} loading="lazy" src={img(s, 750)} alt="Transformation" />
+            <img
+              key={i}
+              loading="lazy"
+              decoding="async"
+              width="360"
+              height="480"
+              src={img(s, 300)}
+              srcSet={`${img(s, 300)} 300w, ${img(s, 500)} 500w`}
+              sizes="(max-width:900px) 270px, 350px"
+              alt="Transformation"
+            />
           ))}
         </div>
       </div>
@@ -196,8 +237,24 @@ function TransformRow({ items, reverse = false }) {
 ══════════════════════════════════════ */
 function ApplyFormEmbed() {
   const [loaded, setLoaded] = useState(false);
+  const [active, setActive] = useState(false);
+  const cardRef = useRef(null);
+
+  /* Don't load the third-party form until the card is close to the viewport. */
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") { setActive(true); return; }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { setActive(true); io.disconnect(); }
+    }, { rootMargin: "700px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
+    if (!active) return;
+
     // Inject the HighLevel form_embed.js script
     const scriptSrc = "https://ww.ptextramilefitness.com/js/form_embed.js";
     let script = document.querySelector(`script[src="${scriptSrc}"]`);
@@ -212,10 +269,10 @@ function ApplyFormEmbed() {
     // Safety fallback: ensure skeleton transitions away after 3s if iframe finishes silently
     const timer = setTimeout(() => setLoaded(true), 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [active]);
 
   return (
-    <div className="apply-card" data-r>
+    <div className="apply-card" data-r ref={cardRef}>
       <div className="apply-card-topbar">
         <span className="apply-status-pill">
           <span className="apply-dot" aria-hidden="true" />
@@ -232,11 +289,12 @@ function ApplyFormEmbed() {
           </div>
         )}
         <iframe
-          src={APPLY_FORM}
+          src={active ? APPLY_FORM : undefined}
           id="Nz8kmtE6GWsivAq5sOCV"
           title="Extra Mile Fitness Application Form"
           scrolling="no"
-          onLoad={() => setLoaded(true)}
+          loading="lazy"
+          onLoad={() => active && setLoaded(true)}
           style={{ border: "none", width: "100%" }}
         />
       </div>
@@ -348,24 +406,38 @@ export default function Page() {
         fab.classList.toggle("on", scrollY > 700);
       });
     };
+
+    /* Pointer effects are desktop-only and throttled to one frame. */
+    const finePointer = matchMedia("(pointer: fine)").matches;
+    let moveRaf = 0;
+    let px = 0, py = 0, pTarget = null;
+
+    const applyMove = () => {
+      moveRaf = 0;
+      root.style.setProperty("--mx", px + "px"); root.style.setProperty("--my", py + "px");
+      cur.style.transform = `translate(${px}px,${py}px) translate(-50%,-50%)`;
+      cur.classList.toggle("h", !!pTarget.closest?.("a,button,summary"));
+      const b = pTarget.closest?.(".btn:not(.fab)");
+      if (b) { const q = b.getBoundingClientRect(); b.style.transform = `translate(${(px - q.left - q.width / 2) * 0.2}px,${(py - q.top - q.height / 2) * 0.3}px)`; }
+    };
     const onMove = (e) => {
-      root.style.setProperty("--mx", e.clientX + "px"); root.style.setProperty("--my", e.clientY + "px");
-      cur.style.transform = `translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
-      cur.classList.toggle("h", !!e.target.closest?.("a,button,summary"));
-      const b = e.target.closest?.(".btn:not(.fab)");
-      if (b) { const q = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - q.left - q.width / 2) * 0.2}px,${(e.clientY - q.top - q.height / 2) * 0.3}px)`; }
+      px = e.clientX; py = e.clientY; pTarget = e.target;
+      if (!moveRaf) moveRaf = requestAnimationFrame(applyMove);
     };
     const onOut = (e) => { const b = e.target.closest?.(".btn"); if (b) b.style.transform = ""; };
 
     addEventListener("scroll", onScroll, { passive: true });
-    addEventListener("mousemove", onMove);
-    addEventListener("mouseout", onOut);
+    if (finePointer) {
+      addEventListener("mousemove", onMove, { passive: true });
+      addEventListener("mouseout", onOut);
+    }
     onScroll();
     return () => {
       io.disconnect(); cio.disconnect();
       removeEventListener("scroll", onScroll);
       removeEventListener("mousemove", onMove);
       removeEventListener("mouseout", onOut);
+      cancelAnimationFrame(moveRaf);
       removeEventListener("resize", setTopbar);
       if (ro) ro.disconnect();
     };
