@@ -74,7 +74,7 @@ const faqs = [
 ];
 
 const HERO_VIDEO = "/video/hero.mp4";
-const STORY_VIDEO = "";
+const STORY_VIDEO = "/video/becoming-her.mp4";
 
 /* ── Animated word reveal ── */
 const Words = ({ t }) =>
