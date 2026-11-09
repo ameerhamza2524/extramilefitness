@@ -754,7 +754,34 @@ export default function Page() {
       </section>
 
       {/* ════════════════════════════════
-          12. APPLY (EMBEDDED)
+          12. BEFORE YOU APPLY
+      ════════════════════════════════ */}
+      <section id="before-you-apply" className="bya">
+        <div className="wrap" style={{ maxWidth: 1000 }}>
+          <div className="eyebrow" data-r>Step 00 · Before you apply</div>
+          <h2 data-r>Before you <em>apply.</em></h2>
+
+          <p className="bya-lead" data-r>
+            <span>This isn't group coaching.</span>
+            <span>It isn't a fad diet.</span>
+            <span>It isn't a template.</span>
+          </p>
+
+          <div className="bya-copy">
+            <p data-r><strong>EMF is 1:1 concierge coaching</strong> for men and women who perform at a high level in their careers, and are ready to hold their health to the same standard.</p>
+            <p data-r>Where you start doesn't matter. Complete beginner or getting back to your best, I've spent 10 years taking people from day one to an elite standard.</p>
+            <p data-r>What matters is how you think. A beginner mindset looks for shortcuts. An elite mindset commits, shows up when it's inconvenient, and owns the result.</p>
+            <p data-r>You don't need to be elite to start. You need to be ready to think like it.</p>
+          </div>
+
+          <div className="bya-close" data-r>
+            If you're after cheap, quick or easy, <em>this isn't for you.</em>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════
+          13. APPLY (EMBEDDED)
       ════════════════════════════════ */}
       <section id="apply" style={{ background: "var(--bg2)" }}>
         <div className="wrap" style={{ maxWidth: 960 }}>
@@ -811,7 +838,7 @@ export default function Page() {
       </section>
 
       {/* ════════════════════════════════
-          13. FINAL CTA
+          14. FINAL CTA
       ════════════════════════════════ */}
       <section className="final">
         <img className="cut" data-p="0.04" src="/img/cut2.webp" alt="" />
