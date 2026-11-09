@@ -529,8 +529,26 @@ export default function Page() {
           <TransformRow items={transforms} reverse />
         </div>
 
+        {/* Video testimonials */}
+        <div className="wrap" style={{ marginTop: 100 }}>
+          <div className="eyebrow" data-r>What our members say</div>
+          <h2 data-r>Hear it <em>from them.</em></h2>
+          <div className="testimonials-grid" data-r>
+            {videoTestimonials.map((name) => <TestimonialCard key={name} name={name} />)}
+            <a className="tc tc-apply" href={APPLY}>
+              <div className="tc-thumb">
+                <span className="tc-apply-inner">
+                  <b>Your story next</b>
+                  <span>Apply for coaching →</span>
+                </span>
+              </div>
+              <p className="tc-name">Apply now</p>
+            </a>
+          </div>
+        </div>
+
         {/* Client story cards */}
-        <div className="wrap" style={{ marginTop: 80 }}>
+        <div className="wrap" style={{ marginTop: 100 }}>
           <div className="eyebrow" data-r>Client stories</div>
           <h3 className="res-sub-h" data-r>The people behind the numbers.</h3>
           <div className="res">
@@ -562,23 +580,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Video testimonials */}
-        <div className="wrap" style={{ marginTop: 100 }}>
-          <div className="eyebrow" data-r>What our members say</div>
-          <h2 data-r>Hear it <em>from them.</em></h2>
-          <div className="testimonials-grid" data-r>
-            {videoTestimonials.map((name) => <TestimonialCard key={name} name={name} />)}
-            <a className="tc tc-apply" href={APPLY}>
-              <div className="tc-thumb">
-                <span className="tc-apply-inner">
-                  <b>Your story next</b>
-                  <span>Apply for coaching →</span>
-                </span>
-              </div>
-              <p className="tc-name">Apply now</p>
-            </a>
-          </div>
-        </div>
         <div className="wrap" style={{ marginTop: 70, textAlign: "center" }} data-r>
           <a className="btn solid" href={APPLY}>Apply for coaching →</a>
         </div>
