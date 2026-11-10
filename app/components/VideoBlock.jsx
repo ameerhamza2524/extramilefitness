@@ -19,6 +19,8 @@ export default function VideoBlock({
   className = "",
 }) {
   const [playing, setPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
   const hasVideo = Boolean(videoId || src);
   const isLocal = Boolean(src);
   const youtubeSrc = videoId
@@ -30,7 +32,24 @@ export default function VideoBlock({
     <div className={`vb ${className}`.trim()} style={{ aspectRatio: aspect }}>
       {playing && hasVideo ? (
         isLocal ? (
-          <video src={src} poster={poster} controls autoPlay playsInline preload="metadata" />
+          <>
+            <video
+              src={src}
+              poster={poster}
+              controls
+              autoPlay
+              playsInline
+              preload="auto"
+              onCanPlay={() => setReady(true)}
+              onPlaying={() => setReady(true)}
+              onError={() => setFailed(true)}
+            />
+            {!ready && (
+              <span className="vb-loading" aria-live="polite">
+                {failed ? "Video unavailable" : "Loading video…"}
+              </span>
+            )}
+          </>
         ) : (
           <iframe
             src={youtubeSrc}
