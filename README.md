@@ -8,6 +8,7 @@
 - Colours: bg #101915, panel #16201B, tan #C19A6B, cream #EDE8E0 (sampled from the brand PDF).
 - Fonts: PDF uses Gilroy / MADE Outer Sans / Authentic Signature (licensed). Outfit + Mrs Saint Delafield (Google Fonts) are used as close free stand-ins. If the client owns the licences, add the files to `public/fonts` and swap in `app/layout.jsx` via `next/font/local`.
 - Apply link: `APPLY` constant at the top of `app/page.jsx`.
+- Application form: Typeform embed in `app/page.jsx` (`TYPEFORM_ID`). The post-submit redirect to `/thank-you` is configured inside Typeform.
 
 ## Video
-Put the client's files in `public/video/` and set `HERO_VIDEO` (hero, with a "Turn sound on" button) and/or `STORY_VIDEO` (the Watch section; .mp4 path or a YouTube/Vimeo embed URL) at the top of `app/page.jsx`. Left empty, the hero shows the photo and the Watch section shows a poster only.
+All video IDs live in `lib/videos.js`. The shared `app/components/VideoBlock.jsx` renders a click-to-play poster and only loads the YouTube (nocookie) iframe on click. Pass `aspect="9/16"` for Shorts. `VIDEOS.blackFriday` is intentionally unused.

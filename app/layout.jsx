@@ -6,7 +6,7 @@ const script = Mrs_Saint_Delafield({ subsets: ["latin"], variable: "--script", w
 
 export const metadata = {
   title: "Extra Mile Fitness | Get in the best shape of your life, without it taking over your life",
-  description: "1:1 concierge coaching for busy professionals who run teams, travel and don't have time to figure it out.",
+  description: "1:1 concierge coaching for busy professionals who run teams, travel and don’t have time to figure it out.",
   icons: {
     icon: [
       { url: "/icon.png", type: "image/png" },

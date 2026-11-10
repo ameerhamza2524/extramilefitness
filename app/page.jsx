@@ -1,16 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import VideoBlock from "./components/VideoBlock";
+import { VIDEOS } from "../lib/videos";
 
 const APPLY = "#apply";
-const APPLY_FORM = "https://ww.ptextramilefitness.com/widget/survey/Nz8kmtE6GWsivAq5sOCV";
 const CDN = "https://images.squarespace-cdn.com/content/v1/669cd7e93e05045d9aff6341/";
 const img = (path, w = 900) => `${CDN}${path}?format=${w}w`;
 
-const forYou = [
-  ["You've been better than this.", "You've peaked before, maybe more than once, and people still remember it. Or you never stopped training. You just stopped progressing."],
-  ['"After this trip." After this project. Monday.', "You know exactly what to do. You just keep moving the start date."],
-  ["You're ready for next-level results.", "You just need a kick in the right direction."],
-];
+/* Final CTA background — swap this one path when the new photo arrives. */
+// TODO (owner): replace with the new final-CTA image, e.g. "/img/final-cta.webp".
+const FINAL_CTA_IMAGE = "/img/cut2.webp";
 
 const transforms = [
   "121c3806-f07d-4596-88e9-ece8e07cf4c4/Sophia+Transformation.png",
@@ -31,38 +30,11 @@ const transforms = [
 
 const videoTestimonials = ["Reiss", "Louis", "Hazel", "Ariel", "Maggie", "Alice"];
 
-const HERO_VIDEO = "/video/hero.mp4";
-const STORY_VIDEO = "/video/becoming-her.mp4";
-
 /* ── Animated word reveal ── */
 const Words = ({ t }) =>
   t.split(" ").map((w, i) => (
     <span className="wm" key={i}><span style={{ "--i": i }}>{w}&nbsp;</span></span>
   ));
-
-/* ── Video section (Watch) ── */
-function Story({ src }) {
-  const [on, setOn] = useState(false);
-  return (
-    <div className="vf">
-      {on ? (
-        src.startsWith("http") ? (
-          <iframe src={src + (src.includes("?") ? "&" : "?") + "autoplay=1"} allow="autoplay; fullscreen" allowFullScreen />
-        ) : (
-          <video src={src} controls autoPlay playsInline />
-        )
-      ) : (
-        <>
-          <img src="/img/crowd.webp" alt="" />
-          {src
-            ? <button className="play" onClick={() => setOn(true)} aria-label="Play video"><i /></button>
-            : process.env.NODE_ENV === "development" && <p className="hint">Set STORY_VIDEO in app/page.jsx to enable the video</p>
-          }
-        </>
-      )}
-    </div>
-  );
-}
 
 /* ── Urgency bar ── */
 function UrgencyBanner() {
@@ -233,10 +205,15 @@ function TransformRow({ items, reverse = false }) {
 }
 
 /* ══════════════════════════════════════
-   APPLY FORM EMBED (HIGHLEVEL SURVEY)
+   APPLY FORM EMBED (TYPEFORM)
+   Owner note: the post-submit redirect to
+   https://extramilefitness.vercel.app/thank-you is configured inside
+   Typeform (Ending → Redirect on completion), not in this codebase.
 ══════════════════════════════════════ */
+const TYPEFORM_ID = "01M6W1CE6YRAS328G2Q5ASWDDP";
+const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH";
+
 function ApplyFormEmbed() {
-  const [loaded, setLoaded] = useState(false);
   const [active, setActive] = useState(false);
   const cardRef = useRef(null);
 
@@ -252,23 +229,31 @@ function ApplyFormEmbed() {
     return () => io.disconnect();
   }, []);
 
+  /* Load the Typeform embed script once. Calling tf.load() re-scans the DOM
+     so the form also mounts after client-side navigation back to this page. */
   useEffect(() => {
     if (!active) return;
+    const scriptSrc = "https://embed.typeform.com/next/embed.js";
+    const init = () => {
+      if (typeof window !== "undefined" && window.tf && typeof window.tf.load === "function") {
+        window.tf.load();
+      }
+    };
 
-    // Inject the HighLevel form_embed.js script
-    const scriptSrc = "https://ww.ptextramilefitness.com/js/form_embed.js";
     let script = document.querySelector(`script[src="${scriptSrc}"]`);
     if (!script) {
       script = document.createElement("script");
       script.src = scriptSrc;
-      script.type = "text/javascript";
       script.async = true;
+      script.addEventListener("load", init, { once: true });
       document.body.appendChild(script);
+    } else if (window.tf) {
+      init();
+    } else {
+      script.addEventListener("load", init, { once: true });
     }
 
-    // Safety fallback: ensure skeleton transitions away after 3s if iframe finishes silently
-    const timer = setTimeout(() => setLoaded(true), 3000);
-    return () => clearTimeout(timer);
+    return () => script && script.removeEventListener("load", init);
   }, [active]);
 
   return (
@@ -281,22 +266,8 @@ function ApplyFormEmbed() {
         <span className="apply-card-tag">1:1 Concierge Coaching</span>
       </div>
 
-      <div className="apply-embed">
-        {!loaded && (
-          <div className="apply-skeleton">
-            <div className="apply-spinner" aria-hidden="true" />
-            <span className="apply-skeleton-text">Loading application...</span>
-          </div>
-        )}
-        <iframe
-          src={active ? APPLY_FORM : undefined}
-          id="Nz8kmtE6GWsivAq5sOCV"
-          title="Extra Mile Fitness Application Form"
-          scrolling="no"
-          loading="lazy"
-          onLoad={() => active && setLoaded(true)}
-          style={{ border: "none", width: "100%" }}
-        />
+      <div className="apply-embed apply-embed-typeform">
+        {active && <div className="typeform-live" data-tf-live={TYPEFORM_ID} />}
       </div>
     </div>
   );
@@ -306,67 +277,6 @@ function ApplyFormEmbed() {
    PAGE
 ══════════════════════════════════════ */
 export default function Page() {
-  const vref = useRef(null);
-  const userSet = useRef(false);
-  const [muted, setMuted] = useState(true);
-  const [soundBlocked, setSoundBlocked] = useState(false);
-
-  /* Sound is ON by default. Browsers can block un-muted autoplay until the
-     visitor interacts, so we keep retrying (on load + first click/keypress)
-     and fall back to muted only while waiting. The button stays a plain
-     toggle: "Sound on" / "Sound off". */
-  useEffect(() => {
-    const v = vref.current;
-    if (!v) return;
-
-    const gestures = ["pointerdown", "keydown", "touchstart"];
-    let attached = false;
-
-    const detach = () => {
-      gestures.forEach((ev) => removeEventListener(ev, onGesture));
-      attached = false;
-    };
-    const onGesture = (e) => {
-      /* Ignore the sound button — it has its own toggle handler. */
-      if (e.target?.closest?.(".snd")) { detach(); return; }
-      if (userSet.current) { detach(); return; }
-      v.muted = false;
-      v.play().catch(() => {});
-      setMuted(false);
-      setSoundBlocked(false);
-      detach();
-    };
-    const attach = () => {
-      if (attached) return;
-      attached = true;
-      gestures.forEach((ev) => addEventListener(ev, onGesture, { once: true }));
-    };
-
-    const trySoundOn = () => {
-      if (userSet.current) return;
-      v.muted = false;
-      const p = v.play();
-      if (p && p.then) {
-        p.then(() => { if (!userSet.current) setMuted(false); }).catch(() => {
-          if (userSet.current) return;
-          v.muted = true;
-          setMuted(true);
-          setSoundBlocked(true);
-          v.play().catch(() => {});
-          attach();
-        });
-      }
-    };
-
-    trySoundOn();
-    v.addEventListener("canplay", trySoundOn);
-
-    return () => {
-      v.removeEventListener("canplay", trySoundOn);
-      detach();
-    };
-  }, []);
-
   useEffect(() => {
     const io = new IntersectionObserver(
       (es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))),
@@ -455,7 +365,6 @@ export default function Page() {
         <img src="/logo.png" alt="Extra Mile Fitness" />
         <div className="lk">
           <a href="#results">Results</a>
-          <a href="#watch">Watch</a>
           <a href="#before-you-apply">Before you apply</a>
         </div>
         <a className="btn" href={APPLY}>Apply</a>
@@ -474,7 +383,7 @@ export default function Page() {
               <em><Words t="without it taking over your life." /></em>
             </h1>
             <p className="sub" data-r style={{ "--d": "1.9s" }}>
-              1:1 concierge coaching for busy professionals who run teams, travel and don't have time to figure it out.
+              1:1 concierge coaching for busy professionals who run teams, travel and don’t have time to figure it out.
             </p>
             <div data-r style={{ "--d": "2.1s" }}>
               <a className="btn solid hero-cta" href={APPLY}>Apply for coaching →</a>
@@ -488,34 +397,13 @@ export default function Page() {
             </div>
           </div>
           <div className="phw" data-r style={{ "--d": "1.6s" }}>
-            <div className={`ph${HERO_VIDEO ? " has-video" : ""}`}>
-              {HERO_VIDEO
-                ? <video ref={vref} src={HERO_VIDEO} poster="/img/hero.webp" autoPlay muted={muted} loop playsInline preload="metadata" />
-                : <img src="/img/hero.webp" alt="Miles, founder of Extra Mile Fitness" />}
-            </div>
-            {HERO_VIDEO && (
-              <button
-                className="snd"
-                aria-pressed={!muted}
-                aria-label={muted ? "Turn sound on" : "Turn sound off"}
-                onClick={() => {
-                  const v = vref.current;
-                  if (!v) return;
-                  userSet.current = true;
-                  if (muted) {
-                    v.muted = false;
-                    setMuted(false);
-                    setSoundBlocked(false);
-                    v.play().catch(() => {});
-                  } else {
-                    v.muted = true;
-                    setMuted(true);
-                  }
-                }}
-              >
-                {muted ? (soundBlocked ? "Turn sound on" : "Sound on") : "Sound off"}
-              </button>
-            )}
+            <VideoBlock
+              videoId={VIDEOS.mainLanding}
+              aspect="16/9"
+              title="Extra Mile Fitness — an introduction"
+              poster="/img/hero.webp"
+              className="hero-vb"
+            />
           </div>
         </div>
         <div className="scroll" />
@@ -563,15 +451,6 @@ export default function Page() {
           <h2 data-r>Hear it <em>from them.</em></h2>
           <div className="testimonials-grid" data-r>
             {videoTestimonials.map((name) => <TestimonialCard key={name} name={name} />)}
-            <a className="tc tc-apply" href={APPLY}>
-              <div className="tc-thumb">
-                <span className="tc-apply-inner">
-                  <b>Your story next</b>
-                  <span>Apply for coaching →</span>
-                </span>
-              </div>
-              <p className="tc-name">Apply now</p>
-            </a>
           </div>
         </div>
 
@@ -584,61 +463,7 @@ export default function Page() {
       <Ticker />
 
       {/* ════════════════════════════════
-          4. THIS IS FOR YOU IF
-      ════════════════════════════════ */}
-      <section style={{ background: "var(--bg2)" }}>
-        <div className="wrap">
-          <div className="eyebrow" data-r>This is for you if</div>
-          <h2 data-r>You know what to do. <em>Keeping it</em> is the hard part.</h2>
-          <div className="for">
-            {forYou.map(([h, p], i) => (
-              <div key={i} data-r style={{ "--d": `${i * 0.12}s` }}>
-                <i>0{i + 1}</i><b>{h}</b><p>{p}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════
-          5. THE REAL PROBLEM
-      ════════════════════════════════ */}
-      <section>
-        <div className="wrap split">
-          <div className="im" data-r>
-            <img data-p="0.08" src="/img/coach.webp" alt="Coaching in the gym" />
-          </div>
-          <div>
-            <div className="eyebrow" data-r>The real problem</div>
-            <h2 data-r>You don't need more <em>information.</em></h2>
-            <p data-r>You know how to train. You know how to eat. You've done it before, and you could probably write your own programme.</p>
-            <p data-r>Knowing isn't the problem. <strong>Keeping your standard is.</strong> A standard isn't something you hit once. It's something you keep.</p>
-            <p data-r>What you're missing is someone outside your circle holding you to it. Not a friend who'll let it slide. A professional who notices when you miss, and asks why.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Full-bleed band */}
-      <div className="band">
-        <img data-p="0.15" src="/img/gym.webp" alt="" />
-        <h2 data-r>A goal you reach becomes your <em>floor.</em></h2>
-      </div>
-
-      {/* ════════════════════════════════
-          6. WATCH
-      ════════════════════════════════ */}
-      <section id="watch">
-        <div className="wrap">
-          <div className="eyebrow" data-r>Watch</div>
-          <h2 data-r>See what the <em>standard</em> looks like.</h2>
-          <div data-r style={{ marginTop: 50 }}>
-            <Story src={STORY_VIDEO} />
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════
-          7. BEFORE YOU APPLY
+          4. BEFORE YOU APPLY
       ════════════════════════════════ */}
       <section id="before-you-apply" className="bya">
         <div className="wrap" style={{ maxWidth: 1000 }}>
@@ -646,20 +471,20 @@ export default function Page() {
           <h2 data-r>Before you <em>apply.</em></h2>
 
           <p className="bya-lead" data-r>
-            <span>This isn't group coaching.</span>
-            <span>It isn't a fad diet.</span>
-            <span>It isn't a template.</span>
+            <span>This isn’t group coaching.</span>
+            <span>It isn’t a fad diet.</span>
+            <span>It isn’t a template.</span>
           </p>
 
           <div className="bya-copy">
             <p data-r><strong>EMF is 1:1 concierge coaching</strong> for men and women who perform at a high level in their careers, and are ready to hold their health to the same standard.</p>
-            <p data-r>Where you start doesn't matter. Complete beginner or getting back to your best, I've spent 10 years taking people from day one to an elite standard.</p>
-            <p data-r>What matters is how you think. A beginner mindset looks for shortcuts. An elite mindset commits, shows up when it's inconvenient, and owns the result.</p>
-            <p data-r>You don't need to be elite to start. You need to be ready to think like it.</p>
+            <p data-r>Where you start doesn’t matter. Complete beginner or getting back to your best, I’ve spent 10 years taking people from day one to an elite standard.</p>
+            <p data-r>What matters is how you think. A beginner mindset looks for shortcuts. An elite mindset commits, shows up when it’s inconvenient, and owns the result.</p>
+            <p data-r>You don’t need to be elite to start. You need to be ready to think like it.</p>
           </div>
 
           <div className="bya-close" data-r>
-            If you're after cheap, quick or easy, <em>this isn't for you.</em>
+            If you’re after cheap, quick or easy, <em>this isn’t for you.</em>
           </div>
         </div>
       </section>
@@ -672,7 +497,7 @@ export default function Page() {
           <div className="eyebrow" data-r>Step 01 · Initial Intake</div>
           <h2 data-r>Apply for <em>1-on-1 Coaching.</em></h2>
           <p className="results-sub" data-r>
-            Complete the short assessment below to see if you're a good fit for the programme. All applications are reviewed personally within 24 hours.
+            Complete the short assessment below to see if you’re a good fit for the programme. All applications are reviewed personally within 24 hours.
           </p>
 
           <div className="apply-badges" data-r>
@@ -713,7 +538,7 @@ export default function Page() {
             </span>
             <p className="apply-fallback">
               Form not loading?{" "}
-              <a href={APPLY_FORM} target="_blank" rel="noopener noreferrer">
+              <a href={TYPEFORM_FALLBACK} target="_blank" rel="noopener noreferrer">
                 Open application directly ↗
               </a>
             </p>
@@ -725,10 +550,10 @@ export default function Page() {
           14. FINAL CTA
       ════════════════════════════════ */}
       <section className="final">
-        <img className="cut" data-p="0.04" src="/img/cut2.webp" alt="" />
+        <img className="cut" data-p="0.04" src={FINAL_CTA_IMAGE} alt="" />
         <div className="wrap">
           <img className="lg" data-r src="/logo.png" alt="Extra Mile Fitness" />
-          <h2 data-r>There's no finish line. <em>Only your next standard.</em></h2>
+          <h2 data-r>There’s no finish line. <em>Only your next standard.</em></h2>
           <div data-r>
             <a className="btn solid" href={APPLY}>Apply for coaching →</a>
             <p className="note">New members start: 1st Monday of the month</p>
