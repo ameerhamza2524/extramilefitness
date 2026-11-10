@@ -253,7 +253,9 @@ nav{top:var(--topbar-h,38px)}
    VIDEO BLOCK (shared)
 ══════════════════════════════════════════════ */
 .vb{position:relative;width:100%;background:#000;border:1px solid var(--line);overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.55)}
-.vb iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vb iframe,.vb video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;background:#000}
+/* Home hero: portrait film keeps the original tall hero silhouette. */
+.hero-vb{max-width:420px;margin:0 auto;border-color:var(--tan);box-shadow:0 40px 110px rgba(0,0,0,.65)}
 .vb-poster{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;border:0;background:var(--bg2);cursor:pointer}
 .vb-poster img{width:100%;height:100%;object-fit:cover;filter:brightness(.62) contrast(1.05);transition:transform .9s,filter .5s}
 .vb-poster:hover img{transform:scale(1.04);filter:brightness(.72) contrast(1.05)}
@@ -320,6 +322,7 @@ nav{top:var(--topbar-h,38px)}
   .ty-top{margin-bottom:40px;padding:0 20px}
   .ty-top img{height:38px}
   .ty-video-wrap{margin-top:40px}
+  .hero-vb{max-width:min(80vw,340px)}
   .watch-videos{grid-template-columns:1fr;gap:36px}
   .talia-grid{grid-template-columns:1fr;gap:36px}
   .talia-title{margin-bottom:34px}

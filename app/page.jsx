@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import VideoBlock from "./components/VideoBlock";
-import { VIDEOS } from "../lib/videos";
+import { LOCAL_VIDEOS } from "../lib/videos";
 
 const APPLY = "#apply";
 const CDN = "https://images.squarespace-cdn.com/content/v1/669cd7e93e05045d9aff6341/";
@@ -398,9 +398,9 @@ export default function Page() {
           </div>
           <div className="phw" data-r style={{ "--d": "1.6s" }}>
             <VideoBlock
-              videoId={VIDEOS.mainLanding}
-              aspect="16/9"
-              title="Extra Mile Fitness — an introduction"
+              src={LOCAL_VIDEOS.theNewStandard}
+              aspect="9/16"
+              title="The New Standard — find out more"
               poster="/img/hero.webp"
               className="hero-vb"
             />
