@@ -206,6 +206,8 @@ function TransformRow({ items, reverse = false }) {
 
 /* ══════════════════════════════════════
    APPLY FORM EMBED (TYPEFORM)
+   The only form on the site. Do not add any other form or survey.
+   Form: https://extramilefitness.typeform.com/to/Zl4MFOYH
    Owner note: the post-submit redirect to
    https://extramilefitness.vercel.app/thank-you is configured inside
    Typeform (Ending → Redirect on completion), not in this codebase.

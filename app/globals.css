@@ -218,7 +218,9 @@ nav{top:var(--topbar-h,38px)}
 }
 
 /* ══════════════════════════════════════════════
-   EMBEDDED APPLICATION (HIGHLEVEL SURVEY)
+   EMBEDDED APPLICATION (TYPEFORM — SINGLE FORM)
+   https://extramilefitness.typeform.com/to/Zl4MFOYH
+   No other form exists on the site.
 ══════════════════════════════════════════════ */
 .apply-badges{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 36px;align-items:center}
 .apply-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;background:rgba(193,154,107,.08);border:1px solid rgba(193,154,107,.22);font-size:12px;letter-spacing:.08em;color:var(--cream);text-transform:uppercase;font-weight:400}
