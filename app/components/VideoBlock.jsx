@@ -10,6 +10,8 @@ import { useState } from "react";
  * - `aspect` accepts "16/9" (default) or "9/16" for vertical video.
  * - `autoPlay` starts the video immediately (muted, as browsers require).
  * - `loop` replays the video when it ends (useful for hero films).
+ * - `soundPrompt` shows a “Tap for sound” control; clicking it unmutes
+ *   the video (browsers only allow sound after a user gesture).
  * - Otherwise the player is only mounted after a click, so the page loads fast.
  */
 export default function VideoBlock({
@@ -21,14 +23,16 @@ export default function VideoBlock({
   className = "",
   autoPlay = false,
   loop = false,
+  soundPrompt = false,
 }) {
   const [playing, setPlaying] = useState(autoPlay);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [soundOn, setSoundOn] = useState(false);
   const hasVideo = Boolean(videoId || src);
   const isLocal = Boolean(src);
   const youtubeSrc = videoId
-    ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1${autoPlay ? "&mute=1" : ""}${loop ? `&loop=1&playlist=${videoId}` : ""}`
+    ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1${autoPlay && !soundOn ? "&mute=1" : ""}${loop ? `&loop=1&playlist=${videoId}` : ""}`
     : null;
   const posterSrc = poster || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : null);
 
@@ -42,7 +46,7 @@ export default function VideoBlock({
               poster={poster}
               controls
               autoPlay
-              muted={autoPlay}
+              muted={autoPlay && !soundOn}
               loop={loop}
               playsInline
               preload="auto"
@@ -77,6 +81,11 @@ export default function VideoBlock({
             <span className="vb-ph">Video placeholder</span>
           )}
           <span className="vb-play" aria-hidden="true"><i /></span>
+        </button>
+      )}
+      {autoPlay && soundPrompt && !soundOn && (
+        <button type="button" className="vb-sound" onClick={() => setSoundOn(true)}>
+          <span aria-hidden="true">♪</span> Tap for sound
         </button>
       )}
     </div>
