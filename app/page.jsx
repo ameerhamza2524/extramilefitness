@@ -211,7 +211,7 @@ function TransformRow({ items, reverse = false }) {
    Typeform (Ending → Redirect on completion), not in this codebase.
 ══════════════════════════════════════ */
 const TYPEFORM_ID = "01M6W1CE6YRAS328G2Q5ASWDDP";
-const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH";
+const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH?typeform-source=wk5v5fdcjcd.typeform.com";
 
 function ApplyFormEmbed() {
   const [active, setActive] = useState(false);
@@ -267,7 +267,7 @@ function ApplyFormEmbed() {
       </div>
 
       <div className="apply-embed apply-embed-typeform">
-        {active && <div className="typeform-live" data-tf-live={TYPEFORM_ID} />}
+        <div className="typeform-live" data-tf-live={TYPEFORM_ID} />
       </div>
     </div>
   );
