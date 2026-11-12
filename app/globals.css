@@ -243,6 +243,10 @@ nav{top:var(--topbar-h,38px)}
 .apply-fallback{font-size:13px;color:var(--mut)}
 .apply-fallback a{color:var(--tan);border-bottom:1px solid var(--tan);transition:opacity .2s}
 .apply-fallback a:hover{opacity:.8}
+/* Shown only when the third-party embed never mounts (blocked or offline). */
+.apply-fallback-panel{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:40px 26px;background:inherit}
+.apply-fallback-panel p{max-width:420px;font-size:15px;line-height:1.7;color:var(--mut)}
+.apply-fallback-panel .btn{background:var(--tan);color:var(--bg);border-color:var(--tan)}
 @media(max-width:900px){
   .apply-badges{gap:8px;margin:22px 0 28px}
   .apply-badge{font-size:11px;padding:6px 12px}

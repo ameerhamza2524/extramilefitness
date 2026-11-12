@@ -14,6 +14,7 @@ const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH?typ
 
 export default function ApplyFormEmbed() {
   const [active, setActive] = useState(false);
+  const [slow, setSlow] = useState(false);
   const cardRef = useRef(null);
 
   /* Don't load the third-party form until the card is close to the viewport. */
@@ -55,6 +56,20 @@ export default function ApplyFormEmbed() {
     return () => script && script.removeEventListener("load", init);
   }, [active]);
 
+  /* If the embed is blocked (ad-blocker, firewall, Typeform outage) the card
+     would stay blank. Show a direct link after a short grace period. */
+  useEffect(() => {
+    if (!active) return;
+    const host = cardRef.current?.querySelector(".typeform-live");
+    if (!host) return;
+    const hasFrame = () => Boolean(host.querySelector("iframe"));
+    let timer;
+    const mo = new MutationObserver(() => { if (hasFrame()) { clearTimeout(timer); setSlow(false); } });
+    mo.observe(host, { childList: true, subtree: true });
+    timer = setTimeout(() => { if (!hasFrame()) setSlow(true); }, 9000);
+    return () => { mo.disconnect(); clearTimeout(timer); };
+  }, [active]);
+
   return (
     <div className="apply-card" data-r ref={cardRef}>
       <div className="apply-card-topbar">
@@ -67,6 +82,14 @@ export default function ApplyFormEmbed() {
 
       <div className="apply-embed apply-embed-typeform">
         <div className="typeform-live" data-tf-live={TYPEFORM_ID} />
+        {slow && (
+          <div className="apply-fallback-panel">
+            <p>The application form is taking longer than usual to load here. You can open it in a new tab instead.</p>
+            <a className="btn solid" href={TYPEFORM_FALLBACK} target="_blank" rel="noopener noreferrer">
+              Open the application ↗
+            </a>
+          </div>
+        )}
       </div>
 
       <div className="apply-footer-info">
