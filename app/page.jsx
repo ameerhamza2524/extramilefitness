@@ -104,7 +104,13 @@ function TransformRow({ items, reverse = false }) {
       if (!last) last = now;
       const dt = Math.min(now - last, 48);
       last = now;
-      const half = track.scrollWidth / 2;
+      const kids = track.children;
+      const firstOfSecond = kids[Math.floor(kids.length / 2)];
+      /* Exact distance between the two copies (includes the flex gap),
+         so the auto-scroll loop is seamless. */
+      const half = firstOfSecond && kids[0]
+        ? firstOfSecond.offsetLeft - kids[0].offsetLeft
+        : track.scrollWidth / 2;
 
       if (half > 0) {
         if (!paused.current && !hover.current) {
@@ -157,7 +163,11 @@ function TransformRow({ items, reverse = false }) {
   const step = (sign) => {
     const track = trackRef.current;
     if (!track) return;
-    const half = track.scrollWidth / 2;
+    const kids = track.children;
+    const firstOfSecond = kids[Math.floor(kids.length / 2)];
+    const half = firstOfSecond && kids[0]
+      ? firstOfSecond.offsetLeft - kids[0].offsetLeft
+      : track.scrollWidth / 2;
     const first = track.firstElementChild;
     if (!half || !first) return;
 
