@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
    https://extramilefitness.vercel.app/thank-you is configured inside
    Typeform (Ending → Redirect on completion), not in this codebase.
 ══════════════════════════════════════ */
-const TYPEFORM_ID = "01M6W1CE6YRAS328G2Q5ASWDDP";
+const TYPEFORM_FORM = "Zl4MFOYH";
 const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH?typeform-source=wk5v5fdcjcd.typeform.com";
 
 export default function ApplyFormEmbed() {
@@ -57,17 +57,20 @@ export default function ApplyFormEmbed() {
   }, [active]);
 
   /* If the embed is blocked (ad-blocker, firewall, Typeform outage) the card
-     would stay blank. Show a direct link after a short grace period. */
+     would stay blank. Show a direct link if Typeform never reports ready. */
   useEffect(() => {
     if (!active) return;
-    const host = cardRef.current?.querySelector(".typeform-live");
-    if (!host) return;
-    const hasFrame = () => Boolean(host.querySelector("iframe"));
-    let timer;
-    const mo = new MutationObserver(() => { if (hasFrame()) { clearTimeout(timer); setSlow(false); } });
-    mo.observe(host, { childList: true, subtree: true });
-    timer = setTimeout(() => { if (!hasFrame()) setSlow(true); }, 9000);
-    return () => { mo.disconnect(); clearTimeout(timer); };
+    let ready = false;
+    const onMessage = (e) => {
+      const d = e.data;
+      if (d && typeof d === "object" && d.type === "form-ready") {
+        ready = true;
+        setSlow(false);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    const timer = setTimeout(() => { if (!ready) setSlow(true); }, 10000);
+    return () => { window.removeEventListener("message", onMessage); clearTimeout(timer); };
   }, [active]);
 
   return (
@@ -81,7 +84,17 @@ export default function ApplyFormEmbed() {
       </div>
 
       <div className="apply-embed apply-embed-typeform">
-        <div className="typeform-live" data-tf-live={TYPEFORM_ID} />
+        {/* Widget embed (not the 500px “live” snippet) so the card grows to
+            fit the whole question and the buttons are never cut off. */}
+        <div
+          className="typeform-live"
+          data-tf-widget={TYPEFORM_FORM}
+          data-tf-auto-resize="true"
+          data-tf-inline-on-mobile="true"
+          data-tf-opacity="100"
+          data-tf-transitive-search-params="true"
+          style={{ width: "100%", height: 620 }}
+        />
         {slow && (
           <div className="apply-fallback-panel">
             <p>The application form is taking longer than usual to load here. You can open it in a new tab instead.</p>

@@ -126,13 +126,13 @@ nav{top:var(--topbar-h,38px)}
 /* ══════════════════════════════════════════════
    VIDEO TESTIMONIALS GRID
 ══════════════════════════════════════════════ */
-.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;margin-top:50px}
-.tc{cursor:pointer}
-.tc-thumb{position:relative;aspect-ratio:9/16;overflow:hidden;background:var(--bg2);border:1px solid var(--line)}
-.tc-thumb img{width:100%;height:100%;object-fit:cover;filter:grayscale(.5) brightness(.75);transition:filter .5s,transform .7s}
-.tc:hover .tc-thumb img{filter:grayscale(0) brightness(.9);transform:scale(1.06)}
-.tc-play{position:absolute;inset:0;display:grid;place-items:center;background:transparent}
-.tc-play i{width:0;height:0;border-left:22px solid var(--tan);border-block:13px solid transparent;margin-left:5px}
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:50px}
+.tc{display:flex;flex-direction:column}
+.tc-video{border-color:var(--line);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.tc-video:hover{border-color:var(--tan)}
+.tc-video .vb-play{width:58px;height:58px}
+.tc-video .vb-play i{border-left-width:15px;border-block-width:9px;margin-left:4px}
+.tc-video .vb-play::before{inset:-8px}
 .tc-name{margin-top:10px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);text-align:center}
 
 /* ══════════════════════════════════════════════
@@ -190,8 +190,7 @@ nav{top:var(--topbar-h,38px)}
 .rb p{color:var(--mut);font-size:15px;line-height:1.6}
 
 /* video testimonial cards — taller on results page */
-.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:50px}
-.tc-thumb{aspect-ratio:9/16}
+.testimonials-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
 
 @media(max-width:900px){
   .res{grid-template-columns:1fr}
@@ -225,13 +224,13 @@ nav{top:var(--topbar-h,38px)}
 .apply-badges{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 36px;align-items:center}
 .apply-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;background:rgba(193,154,107,.08);border:1px solid rgba(193,154,107,.22);font-size:12px;letter-spacing:.08em;color:var(--cream);text-transform:uppercase;font-weight:400}
 .apply-badge svg{width:14px;height:14px;color:var(--tan);flex-shrink:0}
-.apply-card{position:relative;border-radius:20px;border:1px solid rgba(193,154,107,.3);background:radial-gradient(ellipse at 50% 0%,rgba(0,66,37,.28) 0%,rgba(22,32,27,.98) 75%),var(--bg2);box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 50px -10px rgba(0,66,37,.35),inset 0 1px 0 rgba(193,154,107,.25);overflow:hidden;backdrop-filter:blur(10px)}
+.apply-card{position:relative;border-radius:20px;border:1px solid rgba(193,154,107,.3);background:radial-gradient(ellipse at 50% 0%,rgba(0,66,37,.28) 0%,rgba(22,32,27,.98) 75%),var(--bg2);box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 50px -10px rgba(0,66,37,.35),inset 0 1px 0 rgba(193,154,107,.25);overflow:hidden}
 .apply-card-topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid rgba(193,154,107,.18);background:rgba(16,25,21,.65);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .apply-status-pill{display:inline-flex;align-items:center;gap:8px;color:#a4f4c2;font-weight:500;font-size:11px}
 .apply-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse-dot 2s infinite}
 @keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .apply-card-tag{color:var(--tan);font-size:11px;letter-spacing:.15em}
-.apply-embed{position:relative;width:100%;background:transparent;overflow:hidden}
+.apply-embed{position:relative;width:100%;background:transparent}
 /* Typeform live embed: the widget itself is 500px tall, so the card
    hugs it instead of leaving a large empty panel underneath. */
 .apply-embed-typeform{min-height:500px}
@@ -261,6 +260,8 @@ nav{top:var(--topbar-h,38px)}
 ══════════════════════════════════════════════ */
 .vb{position:relative;width:100%;background:#000;border:1px solid var(--line);overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.55)}
 .vb iframe,.vb video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;background:#000}
+/* Clean YouTube: the frame is click-through so no title, logo or controls show. */
+.vb-clean iframe{pointer-events:none}
 .vb-loading{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:2;background:rgba(16,25,21,.88);border:1px solid var(--line);color:var(--cream);font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:8px 14px;white-space:nowrap;pointer-events:none}
 /* Home hero: portrait film keeps the original tall hero silhouette. */
 .hero-vb{max-width:420px;margin:0 auto;border-color:var(--tan);box-shadow:0 40px 110px rgba(0,0,0,.65)}
@@ -377,7 +378,6 @@ nav{top:var(--topbar-h,38px)}
 .bf-hero{padding-top:calc(var(--topbar-h,52px) + 92px)}
 .bf-hero .ghost{-webkit-text-stroke:1px rgba(212,175,55,.16)}
 .bf-hero::before{background:radial-gradient(620px circle at var(--mx,70%) var(--my,40%),rgba(212,175,55,.16),transparent 60%)}
-.bf-video-note{margin-top:14px;text-align:center;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tan)}
 
 /* Stats */
 .bf-stats{background:#0d0d0d;border-color:var(--line)}
@@ -400,22 +400,29 @@ nav{top:var(--topbar-h,38px)}
 
 /* Results gallery */
 .bf-gallery-wrap{position:relative;margin-top:54px;padding:0 0 10px}
-.bf-gallery{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 60px 18px;scrollbar-color:var(--tan) #111;scrollbar-width:thin}
+.bf-gallery{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 60px;padding:0 60px 18px;scrollbar-color:var(--tan) #111;scrollbar-width:thin}
 .bf-gallery::-webkit-scrollbar{height:6px}
 .bf-gallery::-webkit-scrollbar-track{background:#111}
 .bf-gallery::-webkit-scrollbar-thumb{background:var(--tan)}
 .bf-gallery-item{flex:0 0 clamp(210px,24vw,300px);aspect-ratio:3/4;scroll-snap-align:start;border:1px solid var(--line);background:#111;overflow:hidden;margin:0}
 .bf-gallery-item img{width:100%;height:100%;object-fit:contain;object-position:center;background:#0b0b0b;transition:transform .7s}
 .bf-gallery-item:hover img{transform:scale(1.04)}
-.bf-gallery-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:52px;height:52px;border-radius:50%;border:1px solid var(--tan);background:rgba(8,8,8,.82);color:var(--cream);font-size:26px;line-height:1;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(8px)}
+/* David's story sits at the front of the gallery as a text card. */
+.bf-story-card{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:28px 26px;background:linear-gradient(160deg,#1a1608,#0b0b0b 70%);border-color:var(--tan)}
+.bf-story-kicker{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--tan)}
+.bf-story-name{font-size:clamp(34px,3.4vw,46px);font-weight:600;line-height:1;color:var(--cream)}
+.bf-story-meta{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tan);padding-bottom:14px;border-bottom:1px solid var(--line)}
+.bf-story-list{display:grid;gap:12px;margin-top:4px}
+.bf-story-list dt{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--tan);margin-bottom:3px}
+.bf-story-list dd{margin:0;font-size:14px;line-height:1.5;color:#d6d0c5}
+.bf-gallery-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:16px}
+.bf-gallery-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--tan);background:rgba(8,8,8,.82);color:var(--cream);font-size:24px;line-height:1;display:grid;place-items:center;cursor:pointer;transition:background .3s,color .3s}
 .bf-gallery-btn:hover{background:var(--tan);color:#080808}
-.bf-gallery-btn.prev{left:18px}
-.bf-gallery-btn.next{right:18px}
-.bf-gallery-hint{text-align:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-top:8px}
+.bf-gallery-hint{text-align:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin:0}
 
 /* Testimonials */
 .bf-testimonials{background:var(--bg2)}
-.bf-testimonials .tc-thumb{border-color:var(--line)}
+.bf-testimonials .tc-video{border-color:var(--line)}
 .bf-testimonials .tc-name{color:var(--mut)}
 
 /* Before you apply */
@@ -455,11 +462,13 @@ nav{top:var(--topbar-h,38px)}
   .bf-hero .phw{order:0}
   .bf-plans{grid-template-columns:1fr;gap:26px}
   .bf-plan{padding:30px 24px}
-  .bf-gallery{padding:0 20px 14px;gap:12px}
+  .bf-gallery{padding:0 20px 14px;gap:12px;scroll-padding:0 20px}
   .bf-gallery-item{flex-basis:clamp(180px,60vw,240px)}
+  .bf-story-card{padding:20px 18px;gap:8px}
+  .bf-story-name{font-size:30px}
+  .bf-story-list{gap:8px}
+  .bf-story-list dd{font-size:13px}
   .bf-gallery-btn{width:42px;height:42px;font-size:20px}
-  .bf-gallery-btn.prev{left:8px}
-  .bf-gallery-btn.next{right:8px}
   .bf-offer-note{margin-bottom:26px}
 }
 @media(max-width:520px){

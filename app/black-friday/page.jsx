@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import ApplyFormEmbed from "../components/ApplyFormEmbed";
 import VideoBlock from "../components/VideoBlock";
-import { VIDEOS } from "../../lib/videos";
+import { VIDEOS, TESTIMONIALS } from "../../lib/videos";
 
 const APPLY = "#apply";
 const CDN = "https://images.squarespace-cdn.com/content/v1/669cd7e93e05045d9aff6341/";
@@ -24,8 +24,6 @@ const transforms = [
   "0dfd6096-f4ec-4424-8932-afdf04059d78/Carlos.png",
   "8e1a09d3-0eba-47fd-aa70-a6ab5bba4979/Amy.png",
 ];
-
-const videoTestimonials = ["Reiss", "Louis", "Hazel", "Ariel", "Maggie", "Alice"];
 
 const plans = [
   {
@@ -57,13 +55,15 @@ function Claim() {
   return <a className="btn solid" href={APPLY}>Claim your spot →</a>;
 }
 
-function TestimonialCard({ name }) {
+function TestimonialCard({ name, videoId }) {
   return (
     <div className="tc">
-      <div className="tc-thumb">
-        <img src="/img/group.webp" alt={`${name} testimonial`} loading="lazy" />
-        <span className="tc-play" aria-hidden="true"><i /></span>
-      </div>
+      <VideoBlock
+        videoId={videoId}
+        aspect="9/16"
+        title={`${name} — member testimonial`}
+        className="tc-video"
+      />
       <p className="tc-name">{name}</p>
     </div>
   );
@@ -85,16 +85,37 @@ function ResultsGallery() {
 
   return (
     <div className="bf-gallery-wrap">
-      <button className="bf-gallery-btn prev" type="button" onClick={() => scroll(-1)} aria-label="Previous results">‹</button>
       <div className="bf-gallery" ref={ref} tabIndex={0} aria-label="Client results gallery">
+        <figure className="bf-gallery-item bf-story-card">
+          <span className="bf-story-kicker">Client story</span>
+          <b className="bf-story-name">David</b>
+          <span className="bf-story-meta">23 weeks · 26 lbs / 12 kg body fat</span>
+          <dl className="bf-story-list">
+            <div>
+              <dt>Biggest motivation</dt>
+              <dd>To get back into his peak shape.</dd>
+            </div>
+            <div>
+              <dt>Main challenge</dt>
+              <dd>Juggling work and running with his physique goals.</dd>
+            </div>
+            <div>
+              <dt>Training</dt>
+              <dd>5 days per week.</dd>
+            </div>
+          </dl>
+        </figure>
         {transforms.map((src, i) => (
           <figure className="bf-gallery-item" key={src}>
             <img src={img(src, 500)} alt={`Client transformation ${i + 1}`} loading="lazy" decoding="async" />
           </figure>
         ))}
       </div>
-      <button className="bf-gallery-btn next" type="button" onClick={() => scroll(1)} aria-label="Next results">›</button>
-      <p className="bf-gallery-hint">Scroll or drag to see more →</p>
+      <div className="bf-gallery-nav">
+        <button className="bf-gallery-btn prev" type="button" onClick={() => scroll(-1)} aria-label="Previous results">‹</button>
+        <p className="bf-gallery-hint">Scroll or drag to see more</p>
+        <button className="bf-gallery-btn next" type="button" onClick={() => scroll(1)} aria-label="Next results">›</button>
+      </div>
     </div>
   );
 }
@@ -198,8 +219,8 @@ export default function BlackFridayPage() {
               autoPlay
               loop
               soundPrompt
+              clean
             />
-            <p className="bf-video-note">Sound on · tap the video if it starts muted</p>
           </div>
         </div>
         <div className="scroll" />
@@ -260,7 +281,7 @@ export default function BlackFridayPage() {
           <h2 data-r>Hear it <em>from them.</em></h2>
           <p className="results-sub" data-r>Six members. Six different starting points. The same standard.</p>
           <div className="testimonials-grid" data-r>
-            {videoTestimonials.map((name) => <TestimonialCard key={name} name={name} />)}
+            {TESTIMONIALS.map((t) => <TestimonialCard key={t.videoId} {...t} />)}
           </div>
           <div className="bf-cta" data-r><Claim /></div>
         </div>

@@ -120,8 +120,10 @@ export default function ThankYouPage() {
               title="What to expect on the call"
               className="vb-short"
               autoPlay
+              soundPrompt
+              clean
             />
-            <p className="video-caption">VIDEO: What to expect on the call · Miles to camera</p>
+            <p className="video-caption">VIDEO: What to expect on the call</p>
           </div>
         </div>
       </header>
