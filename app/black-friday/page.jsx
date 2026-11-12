@@ -87,23 +87,32 @@ function ResultsGallery() {
     <div className="bf-gallery-wrap">
       <div className="bf-gallery" ref={ref} tabIndex={0} aria-label="Client results gallery">
         <figure className="bf-gallery-item bf-story-card">
-          <span className="bf-story-kicker">Client story</span>
-          <b className="bf-story-name">David</b>
-          <span className="bf-story-meta">23 weeks · 26 lbs / 12 kg body fat</span>
-          <dl className="bf-story-list">
-            <div>
-              <dt>Biggest motivation</dt>
-              <dd>To get back into his peak shape.</dd>
-            </div>
-            <div>
-              <dt>Main challenge</dt>
-              <dd>Juggling work and running with his physique goals.</dd>
-            </div>
-            <div>
-              <dt>Training</dt>
-              <dd>5 days per week.</dd>
-            </div>
-          </dl>
+          <img
+            className="bf-story-img"
+            src="/img/david-transformation.webp"
+            alt="David before and after 23 weeks of coaching"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="bf-story-overlay">
+            <span className="bf-story-kicker">Client story</span>
+            <b className="bf-story-name">David</b>
+            <span className="bf-story-meta">23 weeks · 26 lbs / 12 kg body fat</span>
+            <dl className="bf-story-list">
+              <div>
+                <dt>Biggest motivation</dt>
+                <dd>To get back into his peak shape.</dd>
+              </div>
+              <div>
+                <dt>Main challenge</dt>
+                <dd>Juggling work and running with his physique goals.</dd>
+              </div>
+              <div>
+                <dt>Training</dt>
+                <dd>5 days per week.</dd>
+              </div>
+            </dl>
+          </div>
         </figure>
         {transforms.map((src, i) => (
           <figure className="bf-gallery-item" key={src}>
