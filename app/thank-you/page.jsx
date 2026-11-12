@@ -119,6 +119,7 @@ export default function ThankYouPage() {
               aspect="9/16"
               title="What to expect on the call"
               className="vb-short"
+              autoPlay
             />
             <p className="video-caption">VIDEO: What to expect on the call · Miles to camera</p>
           </div>

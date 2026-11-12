@@ -163,8 +163,28 @@ function TransformRow({ items, reverse = false }) {
 
     const card = first.getBoundingClientRect().width + 16;
     paused.current = true;
+
+    /* The strip renders the cards twice. When a click would run past either
+       end, jump instantly to the identical frame on the other copy first,
+       then animate the step — so the images loop instead of stopping. */
+    const jumpTo = (next) => {
+      track.classList.remove("nudging");
+      offset.current = next;
+      track.style.transform = `translate3d(${next}px,0,0)`;
+      void track.offsetWidth;
+    };
+
+    let next = offset.current + sign * card;
+    if (next > 0) {
+      jumpTo(-half);
+      next = offset.current + sign * card;
+    } else if (next < -half) {
+      jumpTo(0);
+      next = offset.current + sign * card;
+    }
+
+    offset.current = Math.max(-half, Math.min(0, next));
     track.classList.add("nudging");
-    offset.current = Math.max(-half, Math.min(0, offset.current + sign * card));
     track.style.transform = `translate3d(${offset.current}px,0,0)`;
 
     clearTimeout(timer.current);
@@ -405,6 +425,8 @@ export default function Page() {
               title="The New Standard — find out more"
               poster="/img/hero.webp"
               className="hero-vb"
+              autoPlay
+              loop
             />
           </div>
         </div>

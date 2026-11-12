@@ -2,13 +2,15 @@
 import { useState } from "react";
 
 /**
- * Reusable click-to-play video block.
+ * Reusable video block.
  *
  * - YouTube: pass a video ID (Shorts included).
  * - Local file: pass `src` (e.g. "/video/the-new-standard.mp4").
  * - Leave both empty to show the placeholder state.
  * - `aspect` accepts "16/9" (default) or "9/16" for vertical video.
- * - The player is only mounted after a click, so the page loads fast.
+ * - `autoPlay` starts the video immediately (muted, as browsers require).
+ * - `loop` replays the video when it ends (useful for hero films).
+ * - Otherwise the player is only mounted after a click, so the page loads fast.
  */
 export default function VideoBlock({
   videoId,
@@ -17,14 +19,16 @@ export default function VideoBlock({
   title = "Video",
   poster,
   className = "",
+  autoPlay = false,
+  loop = false,
 }) {
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(autoPlay);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const hasVideo = Boolean(videoId || src);
   const isLocal = Boolean(src);
   const youtubeSrc = videoId
-    ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1`
+    ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1${autoPlay ? "&mute=1" : ""}${loop ? `&loop=1&playlist=${videoId}` : ""}`
     : null;
   const posterSrc = poster || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : null);
 
@@ -38,6 +42,8 @@ export default function VideoBlock({
               poster={poster}
               controls
               autoPlay
+              muted={autoPlay}
+              loop={loop}
               playsInline
               preload="auto"
               onCanPlay={() => setReady(true)}
