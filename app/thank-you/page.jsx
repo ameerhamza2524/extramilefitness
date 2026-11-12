@@ -4,8 +4,8 @@ import StorySections from "../StorySections";
 import VideoBlock from "../components/VideoBlock";
 import { VIDEOS } from "../../lib/videos";
 
-/* PLACEHOLDER: Talia's before/after images and interview video are not supplied yet. */
-const TALIA_VIDEO = "";
+const TALIA_VIDEO = "2mUCxKkg1uI";
+const TALIA_IMAGE = "/img/talia-transformation.webp";
 
 function TaliaSection() {
   return (
@@ -16,24 +16,28 @@ function TaliaSection() {
 
         <div className="talia-grid">
           <div className="talia-media" data-r>
-            <div className="talia-ba">
-              <figure className="ba-ph">
-                <div className="ba-frame">BEFORE photo</div>
-                <figcaption>88kg</figcaption>
-              </figure>
-              <figure className="ba-ph">
-                <div className="ba-frame">AFTER photo (shoot)</div>
-                <figcaption>76.3kg</figcaption>
-              </figure>
-            </div>
+            <figure className="talia-ba">
+              <img
+                src={TALIA_IMAGE}
+                alt="Talia before and after her 16-week transformation, from 88kg to 76.3kg"
+                width={1400}
+                height={1400}
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                <span>Before · 88kg</span>
+                <span>After · 76.3kg</span>
+              </figcaption>
+            </figure>
 
             <div className="talia-video">
               <VideoBlock
                 videoId={TALIA_VIDEO}
                 aspect="16/9"
-                title="Talia’s interview"
+                title="Talia’s story"
               />
-              <p className="video-caption">VIDEO: Talia’s interview</p>
+              <p className="video-caption">VIDEO: Talia’s story</p>
             </div>
 
             <div className="talia-stats">
@@ -55,6 +59,16 @@ function TaliaSection() {
 
             <h3>From lone wolf to leaning on people</h3>
             <p>“I’ve always just been a silent worker.” She nearly skipped the September meet-up. She went anyway, and “that changed my perspective completely, from being lone wolf, do it by yourself, to actually, you can lean on people.” She now trains with other members.</p>
+
+            <blockquote className="talia-quote">
+              <p>“My success is not mine alone, but that of a collective.”</p>
+              <cite>Talia’s English version of a Māori proverb she lives by</cite>
+            </blockquote>
+
+            <p className="talia-advice">
+              <span>Her advice</span>
+              “If you are questioning getting a coach, why are you questioning it? It can only improve you.”
+            </p>
           </div>
         </div>
       </div>

@@ -306,10 +306,10 @@ nav{top:var(--topbar-h,38px)}
 .talia-title{font-size:clamp(40px,6vw,80px);margin-bottom:56px}
 .talia-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,70px);align-items:start}
 .talia-media{display:grid;gap:24px}
-.talia-ba{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ba-ph{display:grid;gap:10px}
-.ba-frame{aspect-ratio:3/4;display:grid;place-items:center;text-align:center;padding:18px;border:1px dashed var(--tan);background:repeating-linear-gradient(135deg,rgba(193,154,107,.06) 0 12px,transparent 12px 24px);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--tan);line-height:1.5}
-.ba-ph figcaption{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);text-align:center}
+.talia-ba{display:grid;gap:12px;margin:0}
+.talia-ba img{display:block;width:100%;height:auto;border:1px solid var(--line);background:var(--bg2)}
+.talia-ba figcaption{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream)}
+.talia-ba figcaption span:last-child{color:var(--tan);text-align:right}
 .talia-video .video-caption{text-align:center}
 .talia-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:1px solid var(--line)}
 .talia-stats>div{background:var(--bg2);padding:22px 14px;text-align:center}
@@ -317,6 +317,11 @@ nav{top:var(--topbar-h,38px)}
 .talia-stats span{display:block;margin-top:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
 .talia-copy p{font-size:17px;line-height:1.75;color:#c9d0cb;margin-bottom:18px}
 .talia-copy h3{font-size:clamp(24px,2.6vw,34px);color:var(--cream);margin:34px 0 16px}
+.talia-quote{margin:40px 0 26px;padding:2px 0 2px 22px;border-left:2px solid var(--tan)}
+.talia-copy .talia-quote p{font-size:clamp(24px,2.6vw,32px);line-height:1.3;font-weight:300;color:var(--cream);margin:0}
+.talia-quote cite{display:block;margin-top:14px;font-style:normal;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.talia-copy .talia-advice{margin:0;padding:22px 24px;background:var(--bg2);border:1px solid var(--line);font-size:17px;line-height:1.7;color:var(--cream)}
+.talia-advice span{display:block;margin-bottom:6px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--tan)}
 
 @media(max-width:900px){
   .ty{padding-top:24px;padding-bottom:70px}
