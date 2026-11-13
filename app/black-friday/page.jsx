@@ -201,6 +201,8 @@ export default function BlackFridayPage() {
               title="The New Standard — Black Friday"
               poster="/img/black-friday-hero.webp"
               className="hero-vb"
+              autoPlay
+              soundPrompt
               loop
               clean
             />

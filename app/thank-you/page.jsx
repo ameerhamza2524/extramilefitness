@@ -120,6 +120,8 @@ export default function ThankYouPage() {
               title="What to expect on the call"
               poster="/img/thank-you-hero.webp"
               className="vb-short"
+              autoPlay
+              soundPrompt
               clean
             />
             <p className="video-caption">VIDEO: What to expect on the call · Miles to camera</p>

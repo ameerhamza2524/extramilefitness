@@ -366,6 +366,8 @@ export default function Page() {
               title="The New Standard — find out more"
               poster="/img/hero.webp"
               className="hero-vb"
+              autoPlay
+              soundPrompt
               loop
             />
           </div>

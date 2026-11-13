@@ -8,9 +8,9 @@ import { useEffect, useRef, useState } from "react";
  * - Local file: pass `src` (e.g., "/video/the-new-standard.mp4").
  * - Leave both empty to show the placeholder state.
  * - `aspect` accepts "16/9" (default) or "9/16" for vertical video.
- * - `autoPlay` starts the video automatically. YouTube autoplay is always
- *   muted (browser policy), so the "Tap for sound" control is shown.
- *   Local files try to start WITH sound first, then fall back to muted.
+ * - `autoPlay` starts the video automatically as soon as the page is idle.
+ *   Browsers block autoplay with sound, so the film starts muted and the
+ *   "Tap for sound" control unmutes it on one press.
  * - `loop` replays the video when it ends (useful for hero films).
  * - `soundPrompt` shows a “Tap for sound” control for muted autoplay.
  * - `clean` hides the YouTube chrome (title, logo, controls).
@@ -50,14 +50,15 @@ export default function VideoBlock({
     let idleId = 0;
     let delayId = 0;
     const start = () => setStarted(true);
-    /* Give the poster, logo and copy a head start before the video request. */
+    /* Give the poster, logo and copy a head start before the video request,
+       then start as soon as the page is idle. */
     delayId = window.setTimeout(() => {
       if (typeof window.requestIdleCallback === "function") {
-        idleId = window.requestIdleCallback(start, { timeout: 1800 });
+        idleId = window.requestIdleCallback(start, { timeout: 1200 });
       } else {
         start();
       }
-    }, 900);
+    }, 500);
     return () => {
       window.clearTimeout(delayId);
       if (idleId && typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idleId);
