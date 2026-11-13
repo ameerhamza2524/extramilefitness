@@ -70,7 +70,7 @@ nav .lk{display:flex;gap:38px;font-size:12px;letter-spacing:.22em;text-transform
 .hero{position:relative}.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(620px circle at var(--mx,70%) var(--my,40%),rgba(193,154,107,.15),transparent 60%)}
 .phw{position:relative}
 .wm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em}.wm span{display:inline-block;transform:translateY(112%);animation:up .8s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.55s + var(--i) * .07s)}@keyframes up{to{transform:none}}
-.loader{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;animation:ld .45s .35s forwards}.loader img{width:150px;animation:pl .7s ease-out}
+.loader{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;animation:ld .45s .35s forwards}.loader img{width:150px;height:auto;animation:pl .7s ease-out}
 .loader::after{content:"";position:absolute;left:50%;top:calc(50% + 110px);width:120px;height:1px;margin-left:-60px;background:var(--tan);transform-origin:left;animation:ln .7s ease-out}
 @keyframes ld{to{opacity:0;visibility:hidden}}@keyframes pl{from{opacity:0;transform:scale(.88);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}@keyframes ln{from{transform:scaleX(0)}}
 #bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--tan);z-index:100}
