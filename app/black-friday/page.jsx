@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import ApplyFormEmbed from "../components/ApplyFormEmbed";
 import VideoBlock from "../components/VideoBlock";
+import LazyImage from "../components/LazyImage";
 import { VIDEOS, TESTIMONIALS } from "../../lib/videos";
 
 const APPLY = "#apply";
@@ -55,11 +56,13 @@ function Claim() {
   return <a className="btn solid" href={APPLY}>Claim your spot →</a>;
 }
 
-function TestimonialCard({ name, videoId }) {
+function TestimonialCard({ name, videoId, src, poster }) {
   return (
     <div className="tc">
       <VideoBlock
         videoId={videoId}
+        src={src}
+        poster={poster}
         aspect="9/16"
         title={`${name} — member testimonial`}
         className="tc-video"
@@ -86,37 +89,9 @@ function ResultsGallery() {
   return (
     <div className="bf-gallery-wrap">
       <div className="bf-gallery" ref={ref} tabIndex={0} aria-label="Client results gallery">
-        <figure className="bf-gallery-item bf-story-card">
-          <img
-            className="bf-story-img"
-            src="/img/david-transformation.webp"
-            alt="David before and after 23 weeks of coaching"
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="bf-story-overlay">
-            <span className="bf-story-kicker">Client story</span>
-            <b className="bf-story-name">David</b>
-            <span className="bf-story-meta">23 weeks · 26 lbs / 12 kg body fat</span>
-            <dl className="bf-story-list">
-              <div>
-                <dt>Biggest motivation</dt>
-                <dd>To get back into his peak shape.</dd>
-              </div>
-              <div>
-                <dt>Main challenge</dt>
-                <dd>Juggling work and running with his physique goals.</dd>
-              </div>
-              <div>
-                <dt>Training</dt>
-                <dd>5 days per week.</dd>
-              </div>
-            </dl>
-          </div>
-        </figure>
         {transforms.map((src, i) => (
           <figure className="bf-gallery-item" key={src}>
-            <img src={img(src, 500)} alt={`Client transformation ${i + 1}`} loading="lazy" decoding="async" />
+            <LazyImage src={img(src, 500)} alt={`Client transformation ${i + 1}`} rootMargin="500px" />
           </figure>
         ))}
       </div>
@@ -181,7 +156,7 @@ export default function BlackFridayPage() {
 
   return (
     <div className="bf-page" style={{ "--topbar-h": `${bannerH}px` }}>
-      <div className="loader"><img src="/logo.png" alt="" /></div>
+      <div className="loader"><img src="/logo.webp" alt="" width={360} height={282} decoding="async" /></div>
 
       {/* Banner */}
       <div className="bf-banner" ref={bannerRef} role="status">
@@ -191,7 +166,7 @@ export default function BlackFridayPage() {
 
       {/* Nav */}
       <nav className="bf-nav">
-        <img src="/logo.png" alt="Extra Mile Fitness" />
+        <img src="/logo.webp" alt="Extra Mile Fitness" width={360} height={282} decoding="async" />
         <Claim />
       </nav>
 
@@ -205,29 +180,28 @@ export default function BlackFridayPage() {
               <Words t="Everyone else starts in January." />
               <em><Words t="You start now." /></em>
             </h1>
-            <p className="sub" data-r style={{ "--d": "1.9s" }}>
+            <p className="sub" data-r style={{ "--d": "0.9s" }}>
               1:1 concierge coaching for busy professionals who run teams, travel and don’t have time to figure it out.
             </p>
-            <div data-r style={{ "--d": "2.1s" }}>
+            <div data-r style={{ "--d": "1.05s" }}>
               <Claim />
               <p className="note">Starts 7 December · Closes Monday 30th November 23:59 GMT</p>
             </div>
-            <div className="hero-proof" data-r style={{ "--d": "2.4s" }}>
+            <div className="hero-proof" data-r style={{ "--d": "1.2s" }}>
               <div className="proof-faces" aria-hidden="true">
-                {["coach", "group", "crowd"].map((k) => <img key={k} src={`/img/${k}.webp`} alt="" />)}
+                {["coach", "group", "crowd"].map((k) => <img key={k} src={`/img/${k}-sm.webp`} alt="" width={36} height={36} decoding="async" />)}
               </div>
-              <span><strong>12 places</strong> · one start date · no January</span>
+              <span><strong>12 places</strong> · one start date · not January</span>
             </div>
           </div>
-          <div className="phw" data-r style={{ "--d": "1.6s" }}>
+          <div className="phw" data-r style={{ "--d": "1.15s" }}>
             <VideoBlock
               videoId={VIDEOS.blackFriday}
               aspect="9/16"
               title="The New Standard — Black Friday"
+              poster="/img/black-friday-hero.webp"
               className="hero-vb"
-              autoPlay
               loop
-              soundPrompt
               clean
             />
           </div>
@@ -290,7 +264,7 @@ export default function BlackFridayPage() {
           <h2 data-r>Hear it <em>from them.</em></h2>
           <p className="results-sub" data-r>Six members. Six different starting points. The same standard.</p>
           <div className="testimonials-grid" data-r>
-            {TESTIMONIALS.map((t) => <TestimonialCard key={t.videoId} {...t} />)}
+            {TESTIMONIALS.map((t) => <TestimonialCard key={t.name} {...t} />)}
           </div>
           <div className="bf-cta" data-r><Claim /></div>
         </div>
@@ -336,7 +310,7 @@ export default function BlackFridayPage() {
       {/* Final CTA */}
       <section className="final bf-final">
         <div className="wrap">
-          <img className="lg" data-r src="/logo.png" alt="Extra Mile Fitness" />
+          <img className="lg" data-r src="/logo.webp" alt="Extra Mile Fitness" width={360} height={282} loading="lazy" decoding="async" />
           <h2 data-r>Everyone else starts in January. <em>You start now.</em></h2>
           <div data-r><Claim /></div>
           <p className="final-spots" data-r>

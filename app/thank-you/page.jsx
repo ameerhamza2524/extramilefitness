@@ -103,7 +103,7 @@ export default function ThankYouPage() {
       {/* (B) Header — logo only, not clickable */}
       <header className="ty">
         <div className="ty-top">
-          <img src="/logo.png" alt="Extra Mile Fitness" />
+          <img src="/logo.webp" alt="Extra Mile Fitness" width={360} height={282} decoding="async" />
         </div>
 
         {/* (C) Hero / title */}
@@ -118,12 +118,11 @@ export default function ThankYouPage() {
               videoId={VIDEOS.thankYouIntro}
               aspect="9/16"
               title="What to expect on the call"
+              poster="/img/thank-you-hero.webp"
               className="vb-short"
-              autoPlay
-              soundPrompt
               clean
             />
-            <p className="video-caption">VIDEO: What to expect on the call</p>
+            <p className="video-caption">VIDEO: What to expect on the call · Miles to camera</p>
           </div>
         </div>
       </header>

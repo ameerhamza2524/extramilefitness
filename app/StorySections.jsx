@@ -1,7 +1,8 @@
 "use client";
+import LazyImage from "./components/LazyImage";
 
 const CDN = "https://images.squarespace-cdn.com/content/v1/669cd7e93e05045d9aff6341/";
-const img = (path, w = 900) => `${CDN}${path}?format=${w}w`;
+const img = (path, w = 900) => (path && path.startsWith("/") ? path : `${CDN}${path}?format=${w}w`);
 
 const results = [
   ["Veronique", "18 weeks", "11 lbs / 5kg drop of Body Fat",
@@ -19,10 +20,9 @@ const results = [
   ["Hazel", "4 years", "86 lbs / 39kg drop of Body Fat",
     "Biggest motivation: to achieve her first pull up. Main challenge: personal self-doubt that she wouldn’t be able to do it. 4–5 days training per week.",
     "5d17f894-a4e7-4ae0-a7f0-ff98518a5c16/Untitled+%28Facebook+Post%29+%284%29.png"],
-  /* PLACEHOLDER: swap these values and the image path when the new client story is supplied. */
-  ["[CLIENT NAME]", "[X] weeks", "[RESULT]",
-    "Biggest motivation: [PLACEHOLDER]. Main challenge: [PLACEHOLDER]. [N] days training per week.",
-    null],
+  ["David", "23 weeks", "26 lbs / 12kgs drop of body fat",
+    "Biggest motivation: to get back into his peak shape. Main challenge: juggling work, running and his other passions with his physique goals. 5 days training per week.",
+    "/img/david-transformation.webp"],
 ];
 
 const steps = [
@@ -51,21 +51,19 @@ export default function StorySections() {
         <div className="wrap">
           <div className="eyebrow" data-r>Client stories</div>
           <h2 data-r>The people <em>behind the numbers.</em></h2>
-          <div className="res">
+          <div className="res cs-grid">
             {results.map(([name, wk, stat, txt, src], i) => (
-              <div className="rc" key={name} data-r style={{ "--d": `${(i % 3) * 0.1}s` }}>
-                <div className="rimg">
-                  {src
-                    ? <img loading="lazy" src={img(src, 1000)} alt={`${name}’s transformation`} />
-                    : <div className="rimg-ph">PLACEHOLDER PHOTO</div>}
-                </div>
-                <div className="rb">
-                  <span>{wk}</span>
+              <article className="cs-card" key={name} data-r style={{ "--d": `${(i % 3) * 0.1}s` }}>
+                {src
+                  ? <LazyImage className="cs-img" src={img(src, 1000)} alt={`${name}’s transformation`} rootMargin="300px" />
+                  : <div className="cs-img cs-img-ph">PLACEHOLDER PHOTO</div>}
+                <div className="cs-body">
+                  <span className="cs-weeks">{wk}</span>
                   <h3>{name}</h3>
                   <b>{stat}</b>
                   <p>{txt}</p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -97,7 +95,7 @@ export default function StorySections() {
           MY STORY
       ════════════════════════════════ */}
       <section className="story">
-        <img className="cut" data-p="0.05" src="/img/cut1.webp" alt="" />
+        <img className="cut" data-p="0.05" src="/img/cut1.webp" alt="" loading="lazy" decoding="async" />
         <div className="wrap">
           <div className="eyebrow" data-r>My story · I know this one, because I lived it</div>
           <div className="sig" data-r>Miles</div>

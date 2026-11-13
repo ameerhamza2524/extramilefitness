@@ -15,6 +15,7 @@ const TYPEFORM_FALLBACK = "https://extramilefitness.typeform.com/to/Zl4MFOYH?typ
 export default function ApplyFormEmbed() {
   const [active, setActive] = useState(false);
   const [slow, setSlow] = useState(false);
+  const [ready, setReady] = useState(false);
   const cardRef = useRef(null);
 
   /* Don't load the third-party form until the card is close to the viewport. */
@@ -60,16 +61,17 @@ export default function ApplyFormEmbed() {
      would stay blank. Show a direct link if Typeform never reports ready. */
   useEffect(() => {
     if (!active) return;
-    let ready = false;
+    let isReady = false;
     const onMessage = (e) => {
       const d = e.data;
       if (d && typeof d === "object" && d.type === "form-ready") {
-        ready = true;
+        isReady = true;
+        setReady(true);
         setSlow(false);
       }
     };
     window.addEventListener("message", onMessage);
-    const timer = setTimeout(() => { if (!ready) setSlow(true); }, 10000);
+    const timer = setTimeout(() => { if (!isReady) setSlow(true); }, 10000);
     return () => { window.removeEventListener("message", onMessage); clearTimeout(timer); };
   }, [active]);
 
@@ -84,6 +86,14 @@ export default function ApplyFormEmbed() {
       </div>
 
       <div className="apply-embed apply-embed-typeform">
+        {/* Loading hint sits behind the iframe: the form covers it once it
+            renders, and it never blocks clicks on the form itself. */}
+        {!ready && !slow && (
+          <div className="apply-loading" role="status" aria-live="polite">
+            <span className="apply-spinner" aria-hidden="true" />
+            <span>Loading your application…</span>
+          </div>
+        )}
         {/* Widget embed (not the 500px “live” snippet) so the card grows to
             fit the whole question and the buttons are never cut off. */}
         <div
@@ -95,7 +105,7 @@ export default function ApplyFormEmbed() {
           data-tf-transitive-search-params="true"
           style={{ width: "100%", height: 620 }}
         />
-        {slow && (
+        {slow && !ready && (
           <div className="apply-fallback-panel">
             <p>The application form is taking longer than usual to load here. You can open it in a new tab instead.</p>
             <a className="btn solid" href={TYPEFORM_FALLBACK} target="_blank" rel="noopener noreferrer">

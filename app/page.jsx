@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import VideoBlock from "./components/VideoBlock";
 import ApplyFormEmbed from "./components/ApplyFormEmbed";
+import LazyImage from "./components/LazyImage";
 import { LOCAL_VIDEOS, TESTIMONIALS } from "../lib/videos";
 
 const APPLY = "#apply";
@@ -68,11 +69,13 @@ function Ticker() {
 }
 
 /* ── Video testimonial card ── */
-function TestimonialCard({ name, videoId }) {
+function TestimonialCard({ name, videoId, src, poster }) {
   return (
     <div className="tc">
       <VideoBlock
         videoId={videoId}
+        src={src}
+        poster={poster}
         aspect="9/16"
         title={`${name} — member testimonial`}
         className="tc-video"
@@ -216,10 +219,8 @@ function TransformRow({ items, reverse = false }) {
       <div className="tg">
         <div ref={trackRef} className="tg-track">
           {[...items, ...items].map((s, i) => (
-            <img
+            <LazyImage
               key={i}
-              loading="lazy"
-              decoding="async"
               width="360"
               height="480"
               src={img(s, 300)}
@@ -317,14 +318,14 @@ export default function Page() {
 
   return (
     <main>
-      <div className="loader"><img src="/logo.png" alt="" /></div>
+      <div className="loader"><img src="/logo.webp" alt="" width={360} height={282} decoding="async" /></div>
       <div id="bar" /><div className="cur" />
       <a className="btn solid fab" href={APPLY}>Apply now →</a>
       <UrgencyBanner />
 
       {/* ════════════ NAV ════════════ */}
       <nav>
-        <img src="/logo.png" alt="Extra Mile Fitness" />
+        <img src="/logo.webp" alt="Extra Mile Fitness" width={360} height={282} decoding="async" />
         <div className="lk">
           <a href="#results">Results</a>
           <a href="#before-you-apply">Before you apply</a>
@@ -344,30 +345,28 @@ export default function Page() {
               <Words t="Get in the best shape of your life," />
               <em><Words t="without it taking over your life." /></em>
             </h1>
-            <p className="sub" data-r style={{ "--d": "1.9s" }}>
+            <p className="sub" data-r style={{ "--d": "0.9s" }}>
               1:1 concierge coaching for busy professionals who run teams, travel and don’t have time to figure it out.
             </p>
-            <div data-r style={{ "--d": "2.1s" }}>
+            <div data-r style={{ "--d": "1.05s" }}>
               <a className="btn solid hero-cta" href={APPLY}>Apply for coaching →</a>
               <p className="note">New members start: 1st Monday of the month</p>
             </div>
-            <div className="hero-proof" data-r style={{ "--d": "2.4s" }}>
+            <div className="hero-proof" data-r style={{ "--d": "1.2s" }}>
               <div className="proof-faces" aria-hidden="true">
-                {["coach", "group", "crowd"].map((k) => <img key={k} src={`/img/${k}.webp`} alt="" />)}
+                {["coach", "group", "crowd"].map((k) => <img key={k} src={`/img/${k}-sm.webp`} alt="" width={36} height={36} decoding="async" />)}
               </div>
               <span>Joined by <strong>650+ clients</strong> across 7 countries</span>
             </div>
           </div>
-          <div className="phw" data-r style={{ "--d": "1.6s" }}>
+          <div className="phw" data-r style={{ "--d": "1.15s" }}>
             <VideoBlock
               src={LOCAL_VIDEOS.theNewStandard}
               aspect="9/16"
               title="The New Standard — find out more"
               poster="/img/hero.webp"
               className="hero-vb"
-              autoPlay
               loop
-              soundPrompt
             />
           </div>
         </div>
@@ -415,7 +414,7 @@ export default function Page() {
           <div className="eyebrow" data-r>What our members say</div>
           <h2 data-r>Hear it <em>from them.</em></h2>
           <div className="testimonials-grid" data-r>
-            {TESTIMONIALS.map((t) => <TestimonialCard key={t.videoId} {...t} />)}
+            {TESTIMONIALS.map((t) => <TestimonialCard key={t.name} {...t} />)}
           </div>
         </div>
 
@@ -500,9 +499,9 @@ export default function Page() {
           14. FINAL CTA
       ════════════════════════════════ */}
       <section className="final">
-        <img className="cut" data-p="0.04" src={FINAL_CTA_IMAGE} alt="" />
+        <img className="cut" data-p="0.04" src={FINAL_CTA_IMAGE} alt="" loading="lazy" decoding="async" />
         <div className="wrap">
-          <img className="lg" data-r src="/logo.png" alt="Extra Mile Fitness" />
+          <img className="lg" data-r src="/logo.webp" alt="Extra Mile Fitness" width={360} height={282} loading="lazy" decoding="async" />
           <h2 data-r>There’s no finish line. <em>Only your next standard.</em></h2>
           <div data-r>
             <a className="btn solid" href={APPLY}>Apply for coaching →</a>

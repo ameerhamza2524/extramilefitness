@@ -11,5 +11,8 @@ out/
 .env*
 !.env.example
 
+# raw video sources (not deployed — compressed files live in public/video)
+media-source/
+
 # package-lock (optional — remove this line if you want to commit it)
 # package-lock.json
